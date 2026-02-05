@@ -13,7 +13,7 @@ public class IntakeRollersConstants {
     //Motor Constants
     public static final int currentLimit = 30;
     public static final boolean isInverted = false;
-    public static double rollersMotorReduction = 0.0;   
+    public static final double rollersMotorReduction = 0.0;   
     public static final double encoderPositionFactor = 1.0; // Rotations -> Rotations
     public static final double encoderVelocityFactor = 1.0 / 60; // RPM -> Rot/Sec
     public static final int rollersMotorFreeCurrentLimit = 38;

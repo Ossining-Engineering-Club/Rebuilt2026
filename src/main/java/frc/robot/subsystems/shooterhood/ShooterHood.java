@@ -1,42 +1,45 @@
-package frc.robot.subsystems.intakepivot;
+package frc.robot.subsystems.shooterhood;
 
-import static frc.robot.subsystems.intakepivot.IntakePivotConstants.*;
+import static frc.robot.subsystems.shooterhood.ShooterHoodConstants.*;
 
-import frc.robot.Constants;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Mat;
+import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class IntakePivot extends SubsystemBase {
-    private final IntakePivotIO io;
-    private final IntakePivotIOInputsAutoLogged inputs = new IntakePivotIOInputsAutoLogged();
+public class ShooterHood extends SubsystemBase{
+    private final ShooterHoodIO io;
+    private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
     private final ProfiledPIDController pid;
 
     private boolean usingPID = false;
     private int ticksSinceLastPID = 1000000;
 
-    private IntakePivot(IntakePivotIO io) {
+    private ShooterHood(ShooterHoodIO io) {
         this.io = io;
 
         switch (Constants.currentMode) {
-            case REAL:
+            case REAL: 
                 pid = 
                     new ProfiledPIDController(
                         kP,
                         kI,
                         kD,
-                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
+                    );
                 break;
             case SIM:
                 pid = 
                     new ProfiledPIDController(
-                        simP, 
-                        simI, 
-                        simD, 
-                        new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration));
+                        kP, 
+                        kI, 
+                        kD, 
+                        new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration)
+                    );
                 break;
             case REPLAY:
                 pid = 
@@ -44,15 +47,17 @@ public class IntakePivot extends SubsystemBase {
                         kP, 
                         kI, 
                         kD, 
-                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
+                    );
                 break;
             default:
                 pid = 
-                    new ProfiledPIDController
-                    (kP, 
-                    kI, 
-                    kD, 
-                    new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                    new ProfiledPIDController(
+                        kP,
+                        kI,
+                        kD,
+                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
+                    );
                 break;
         }
 
@@ -62,19 +67,19 @@ public class IntakePivot extends SubsystemBase {
         pid.setTolerance(pidTolerance);
     }
 
-    @Override 
+    @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Intake Pivot", inputs);
+        Logger.processInputs("Shooter Hood", inputs);
 
-        Logger.recordOutput("Intake Pivot Angle", getAngle());
-        Logger.recordOutput("Intake Pivot Setpoint", pid.getSetpoint().position);
+        Logger.recordOutput("Shooter Hood Angle", getAngle());
+        Logger.recordOutput("Shooter Hood Setpoint", pid.getSetpoint().position);
 
         if (ticksSinceLastPID >= 2) usingPID = false;
         else usingPID = true;
         ticksSinceLastPID++;
 
-        if (!usingPID) pid.reset(getAngle());
+        if(!usingPID) pid.reset(getAngle());
 
         //Soft Limits
         if (getAngle() <= minAngle && inputs.appliedVolts < 0) setVoltage(0);
@@ -118,7 +123,7 @@ public class IntakePivot extends SubsystemBase {
         io.resetSimState();
     }
 
-    public Command GoToAngle(double angleGoal) {
+    public Command goToAngle(double angleGoal) {
         runGoal(angleGoal);
     }
 }
