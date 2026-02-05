@@ -10,10 +10,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 
 public class ShooterHoodIOReal implements ShooterHoodIO {
-    //private final SparkMax hoodMotor;
-    //private final RelativeEncoder encoder;
+    private final SparkMax hoodMotor;
+    private final RelativeEncoder encoder;
 
     public ShooterHoodIOReal() {
-        //hoodMotor = new SparkMax(shooterHoodCANID, MotorType.kBrushless);
+        hoodMotor = new SparkMax(shooterHoodCANID, MotorType.kBrushless);
+        encoder = sparkMax.getEncoder();
     }
 }
