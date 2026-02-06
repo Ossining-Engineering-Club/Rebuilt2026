@@ -16,7 +16,7 @@ public class ShooterHood extends SubsystemBase{
     private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
     private final ProfiledPIDController pid;
 
-    private boolean usingPID = false;
+    private boolean usingPID = false; 
     private int ticksSinceLastPID = 1000000;
 
     private ShooterHood(ShooterHoodIO io) {

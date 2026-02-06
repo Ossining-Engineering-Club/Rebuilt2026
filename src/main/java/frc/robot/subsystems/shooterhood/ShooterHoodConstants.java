@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooterhood;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterHoodConstants {
@@ -15,6 +16,7 @@ public class ShooterHoodConstants {
     //Motor Constants
     public static final int currentLimit = 30;
     public static final boolean isInverted = false;
+    public static final double motorReduction = 0.0;
     public static final double encoderPositionFactor = 1.0; // Rotations -> Rotations
     public static final double encoderVelocityFactor = 1.0 / 60; // RPM -> Rot/Sec
 
@@ -35,4 +37,8 @@ public class ShooterHoodConstants {
     public static final double maxAngle = Units.degreesToRadians(0.0);
     public static final double minAngle = 0.0;
     public static final double startAngle = 0.0;
+
+    //Sim settings
+    public static final DCMotor gearbox = DCMotor.getNeoVortex(1);
+    public static final double hoodMOI = 0.0;
 }
