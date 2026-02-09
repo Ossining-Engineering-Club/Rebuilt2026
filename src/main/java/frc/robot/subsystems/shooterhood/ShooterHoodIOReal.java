@@ -4,7 +4,6 @@ import static frc.robot.subsystems.intakepivot.IntakePivotConstants.freeCurrentL
 import static frc.robot.subsystems.intakepivot.IntakePivotConstants.motorReduction;
 import static frc.robot.subsystems.intakepivot.IntakePivotConstants.stallCurrentLimit;
 import static frc.robot.subsystems.shooterhood.ShooterHoodConstants.*;
-import static frc.robot.util.SparkUtil.sparkStickyFault;
 import static frc.robot.util.SparkUtil.tryUntilOk;
 
 import org.littletonrobotics.junction.Logger;
@@ -18,7 +17,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
-import frc.robot.subsystems.intakepivot.IntakePivotIO;
 
 public class ShooterHoodIOReal implements ShooterHoodIO {
     private final SparkMax hoodMotor;
@@ -48,7 +46,7 @@ public class ShooterHoodIOReal implements ShooterHoodIO {
     }
 
     @Override
-    public void updateInputs(IntakePivotIOInputs inputs) {
+    public void updateInputs(ShooterHoodIOInputs inputs) {
         inputs.appliedVolts = hoodMotor.getAppliedOutput() * hoodMotor.getBusVoltage();
         inputs.angleRadians = encoder.getPosition();
         inputs.statorCurrent = hoodMotor.getOutputCurrent();
