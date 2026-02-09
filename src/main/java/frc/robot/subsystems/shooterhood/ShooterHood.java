@@ -26,36 +26,36 @@ public class ShooterHood extends SubsystemBase{
             case REAL: 
                 pid = 
                     new ProfiledPIDController(
-                        kP,
-                        kI,
-                        kD,
+                        simP,
+                        simI,
+                        simD,
                         new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
                     );
                 break;
             case SIM:
                 pid = 
                     new ProfiledPIDController(
-                        kP, 
-                        kI, 
-                        kD, 
+                        simP, 
+                        simI, 
+                        simD, 
                         new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration)
                     );
                 break;
             case REPLAY:
                 pid = 
                     new ProfiledPIDController(
-                        kP, 
-                        kI, 
-                        kD, 
+                        simP, 
+                        simI, 
+                        simD, 
                         new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
                     );
                 break;
             default:
                 pid = 
                     new ProfiledPIDController(
-                        kP,
-                        kI,
-                        kD,
+                        simP,
+                        simI,
+                        simD,
                         new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
                     );
                 break;
