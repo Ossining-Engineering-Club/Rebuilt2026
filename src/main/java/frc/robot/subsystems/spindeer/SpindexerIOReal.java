@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import static frc.robot.subsystems.spindeer.SpindexerIO.*;
 
 public class SpindexerIOReal {
-    private final  ///// spindexMotor;
+    private final  spindexMotor;
 
     public IntakeRollersIOReal() {
         this.spindexMotor = new TalonFX(SpindexerConstants.spindexerCanID, MotorType.kBrushless);

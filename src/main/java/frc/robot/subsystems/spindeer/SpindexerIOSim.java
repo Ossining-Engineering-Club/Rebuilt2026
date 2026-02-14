@@ -1,3 +1,3 @@
-package frc.robot.subsystems.spindeer;
+package frc.robot.Subsystems.Spindexer;
 
 public class SpindexerIOSim implements SpindexerIO{}
