@@ -10,7 +10,6 @@ public class IntakeRollersConstants {
   public static final double reverseVoltage = -1.0;
 
   // Motor Constants
-  public static final int currentLimit = 30;
   public static final boolean isInverted = false;
   public static final double rollersMotorReduction = 0.0;
   public static final double encoderPositionFactor = 1.0; // Rotations -> Rotations

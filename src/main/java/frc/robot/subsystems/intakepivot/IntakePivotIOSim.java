@@ -4,17 +4,25 @@ import static frc.robot.subsystems.intakepivot.IntakePivotConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+
 import org.littletonrobotics.junction.Logger;
 
 public class IntakePivotIOSim implements IntakePivotIO {
-  public final DCMotorSim intakePivotSim;
+  public final SingleJointedArmSim intakePivotSim;
   public double appliedVolts = 0.0;
 
   public IntakePivotIOSim() {
     intakePivotSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(gearbox, pivotMOI, motorReduction), gearbox);
+        new SingleJointedArmSim(
+            LinearSystemId.createDCMotorSystem(gearbox, pivotMOI, motorReduction),
+            gearbox,
+            motorReduction,
+            intakeLengthMeters,
+            minAngle,
+            maxAngle,
+            true,
+            startAngle);
 
     intakePivotSim.setState(startAngle, 0.0);
   }
@@ -24,13 +32,13 @@ public class IntakePivotIOSim implements IntakePivotIO {
     intakePivotSim.update(0.02);
 
     inputs.appliedVolts = appliedVolts;
-    inputs.angleRadians = intakePivotSim.getAngularPositionRad();
+    inputs.angleRadians = intakePivotSim.getAngleRads();
   }
 
   @Override
   public void setVoltage(double voltage) {
     appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
-    Logger.recordOutput("Intake Pivot set voltage", appliedVolts);
+    Logger.recordOutput("intake pivot set voltage", appliedVolts);
     intakePivotSim.setInputVoltage(appliedVolts);
   }
 
