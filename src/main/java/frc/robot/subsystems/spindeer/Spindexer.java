@@ -21,7 +21,7 @@ public class Spindexer extends SubsystemBase{
     private final SpindexerIOInputsAutologged inputs = new SpindexerIOInputsAutologged();
     private SpindexerState state;
 
-    public SpindexerState(SpindexerIO io) {
+    public Spindexer(SpindexerIO io) {
         this.io = io;
         state = SpindexerState.STOPPED;
     }

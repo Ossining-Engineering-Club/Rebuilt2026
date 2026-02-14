@@ -32,17 +32,17 @@ public class SpindexerIOReal {
                         ));
     }
 
-    @Override
+    
     public void updateInputs(SpindexerIOInputs inputs) {
 
-        inputs.appliedVolts = spindexMotor.getAppliedOutput() * intakeMotor.getBusVoltage();
+        inputs.appliedVolts = spindexMotor.getAppliedOutput() * spindexMotor.getBusVoltage();
         inputs.statorCurrent = spindexMotor.getOutputCurrent();
 
     
-        @Override
-        public void setRollersMotorVoltage(double voltage) {
-            spindexMotor.setVoltage(voltage);
-        }
+
     }
     
+    public void setRollersMotorVoltage(double voltage) {
+        spindexMotor.setVoltage(voltage);
+    }
 }
