@@ -5,7 +5,6 @@ import static frc.robot.subsystems.intakepivot.IntakePivotConstants.*;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-
 import org.littletonrobotics.junction.Logger;
 
 public class IntakePivotIOSim implements IntakePivotIO {
