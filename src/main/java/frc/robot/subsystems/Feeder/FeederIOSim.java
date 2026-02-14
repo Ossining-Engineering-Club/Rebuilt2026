@@ -1,3 +1,3 @@
-package main.java.frc.robot.subsystems.Feeder;
+package frc.robot.subsystems.feeder;
 
-public class FeederIOSim implements FeederIO{}
+public class FeederIOSim implements FeederIO {}

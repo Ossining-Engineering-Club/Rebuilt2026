@@ -2,128 +2,110 @@ package frc.robot.subsystems.shooterhood;
 
 import static frc.robot.subsystems.shooterhood.ShooterHoodConstants.*;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
-public class ShooterHood extends SubsystemBase{
-    private final ShooterHoodIO io;
-    private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
-    private final ProfiledPIDController pid;
+public class ShooterHood extends SubsystemBase {
+  private final ShooterHoodIO io;
+  private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
+  private final ProfiledPIDController pid;
 
-    private boolean usingPID = false;
-    private int ticksSinceLastPID = 1000000;
+  private boolean usingPID = false;
+  private int ticksSinceLastPID = 1000000;
 
-    private ShooterHood(ShooterHoodIO io) {
-        this.io = io;
+  private ShooterHood(ShooterHoodIO io) {
+    this.io = io;
 
-        switch (Constants.currentMode) {
-            case REAL: 
-                pid = 
-                    new ProfiledPIDController(
-                        simP,
-                        simI,
-                        simD,
-                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
-                    );
-                break;
-            case SIM:
-                pid = 
-                    new ProfiledPIDController(
-                        simP, 
-                        simI, 
-                        simD, 
-                        new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration)
-                    );
-                break;
-            case REPLAY:
-                pid = 
-                    new ProfiledPIDController(
-                        simP, 
-                        simI, 
-                        simD, 
-                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
-                    );
-                break;
-            default:
-                pid = 
-                    new ProfiledPIDController(
-                        simP,
-                        simI,
-                        simD,
-                        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
-                    );
-                break;
-        }
-
-        io.updateInputs(inputs);
-        pid.reset(inputs.angleRadians);
-
-        pid.setTolerance(pidTolerance);
+    switch (Constants.currentMode) {
+      case REAL:
+        pid =
+            new ProfiledPIDController(
+                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        break;
+      case SIM:
+        pid =
+            new ProfiledPIDController(
+                simP,
+                simI,
+                simD,
+                new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration));
+        break;
+      case REPLAY:
+        pid =
+            new ProfiledPIDController(
+                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        break;
+      default:
+        pid =
+            new ProfiledPIDController(
+                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        break;
     }
 
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Shooter Hood", inputs);
+    io.updateInputs(inputs);
+    pid.reset(inputs.angleRadians);
 
-        Logger.recordOutput("Shooter Hood Angle", getAngle());
-        Logger.recordOutput("Shooter Hood Setpoint", pid.getSetpoint().position);
+    pid.setTolerance(pidTolerance);
+  }
 
-        if (ticksSinceLastPID >= 2) usingPID = false;
-        else usingPID = true;
-        ticksSinceLastPID++;
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter Hood", inputs);
 
-        if(!usingPID) pid.reset(getAngle());
+    Logger.recordOutput("Shooter Hood Angle", getAngle());
+    Logger.recordOutput("Shooter Hood Setpoint", pid.getSetpoint().position);
 
-        //Soft Limits
-        if (getAngle() <= minAngle && inputs.appliedVolts < 0) setVoltage(0);
-        if (getAngle() >= maxAngle && inputs.appliedVolts > 0) setVoltage(0);
-    }
+    if (ticksSinceLastPID >= 2) usingPID = false;
+    else usingPID = true;
+    ticksSinceLastPID++;
 
-    public double getAngle() {
-        return inputs.angleRadians;
-    }
+    if (!usingPID) pid.reset(getAngle());
 
-    public void runGoal(double angleGoal) {
-        if (angleGoal > maxAngle) angleGoal = maxAngle;
-        if (angleGoal < minAngle) angleGoal = minAngle;
+    // Soft Limits
+    if (getAngle() <= minAngle && inputs.appliedVolts < 0) setVoltage(0);
+    if (getAngle() >= maxAngle && inputs.appliedVolts > 0) setVoltage(0);
+  }
 
-        setVoltage(
-                pid.calculate(
-                    getAngle(), angleGoal
-                )
-        );
+  public double getAngle() {
+    return inputs.angleRadians;
+  }
 
-        ticksSinceLastPID = 0;
-    }
+  public void runGoal(double angleGoal) {
+    if (angleGoal > maxAngle) angleGoal = maxAngle;
+    if (angleGoal < minAngle) angleGoal = minAngle;
 
-    public boolean atGoal() {
-        return pid.atGoal();
-    }
+    setVoltage(pid.calculate(getAngle(), angleGoal));
 
-    public void stop() {
-        setVoltage(0);
-    }
+    ticksSinceLastPID = 0;
+  }
 
-    public void setVoltage(double voltage) {
-        //Soft Limits
-        if (getAngle() <= minAngle) voltage = Math.max(0, voltage);
-        if (getAngle() >= maxAngle) voltage = Math.min(0, voltage);
+  public boolean atGoal() {
+    return pid.atGoal();
+  }
 
-        io.setVoltage(voltage);
-    }
+  public void stop() {
+    setVoltage(0);
+  }
 
-    public void resetSimState() {
-        io.resetSimState();
-    }
+  public void setVoltage(double voltage) {
+    // Soft Limits
+    if (getAngle() <= minAngle) voltage = Math.max(0, voltage);
+    if (getAngle() >= maxAngle) voltage = Math.min(0, voltage);
 
-    public Command goToAngle(double angleGoal) {
-        runGoal(angleGoal);
-    }
+    io.setVoltage(voltage);
+  }
+
+  public void resetSimState() {
+    io.resetSimState();
+  }
+
+  public Command goToAngle(double angleGoal) {
+    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal);
+  }
 }
