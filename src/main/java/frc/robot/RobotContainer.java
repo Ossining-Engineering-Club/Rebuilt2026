@@ -3,6 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -32,13 +34,16 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private SwerveDriveSimulation driveSimulation = null;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // Sim objects
+  private SwerveDriveSimulation driveSimulation = null;
+  private FuelSim fuelSim = null;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -70,6 +75,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
+        configureFuelSim();
         break;
 
       default:
@@ -148,6 +154,29 @@ public class RobotContainer {
                 .ignoringDisable(true));
   }
 
+  private void configureFuelSim() {
+    fuelSim = new FuelSim();
+    fuelSim.spawnStartingFuel();
+
+    fuelSim.registerRobot(
+        Units.inchesToMeters(3 + 30 + 3),
+        Units.inchesToMeters(3 + 24 + 3),
+        Units.inchesToMeters(6.75),
+        driveSimulation::getSimulatedDriveTrainPose,
+        driveSimulation::getDriveTrainSimulatedChassisSpeedsFieldRelative);
+
+    fuelSim.registerIntake(
+        Units.inchesToMeters(-21.27965),
+        Units.inchesToMeters(-15),
+        Units.inchesToMeters(-12.75),
+        Units.inchesToMeters(13.0625),
+        () -> true);
+
+    fuelSim.enableAirResistance();
+
+    fuelSim.start();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -157,13 +186,18 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public void resetSimState() {
+    fuelSim.clearFuel();
+    fuelSim.spawnStartingFuel();
+  }
+
   public void updateSimulation() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
     SimulatedArena.getInstance().simulationPeriodic();
+    fuelSim.updateSim();
+
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-    Logger.recordOutput(
-        "FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
   }
 }
