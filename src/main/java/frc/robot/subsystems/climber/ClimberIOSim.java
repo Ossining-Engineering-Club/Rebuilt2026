@@ -29,14 +29,14 @@ public class ClimberIOSim implements ClimberIO {
     inputs.climberMotorAngleRadians = climberSim.getAngularPositionRad();
   }
 
-  // @Override
-  public void setVoltage(double voltage) {
+  @Override
+  public void setClimberMotorVoltage(double voltage) {
     appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
     Logger.recordOutput("SetVoltages/Climber", appliedVolts);
     climberSim.setInputVoltage(appliedVolts);
   }
 
-  // @Override
+  @Override
   public void resetSimState() {
     climberSim.setState(ClimberConstants.startPosition, 0.0);
   }
