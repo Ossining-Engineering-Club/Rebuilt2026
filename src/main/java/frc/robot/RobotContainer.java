@@ -9,7 +9,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -168,7 +167,6 @@ public class RobotContainer {
     controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(120)));
     controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
     controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
-    controller.b().onFalse(Commands.runOnce(() -> turret.setVoltage(0)));
   }
 
   private void configureFuelSim() {

@@ -132,10 +132,10 @@ public class Turret extends SubsystemBase {
   }
 
   public Command trackAngle(DoubleSupplier angleSupplier) {
-    return Commands.run(() -> runGoal(angleSupplier.getAsDouble()), this);
+    return Commands.run(() -> runGoal(angleSupplier.getAsDouble()), this).finallyDo(() -> stop());
   }
 
   public Command goToAngle(double angleGoal) {
-    return Commands.run(() -> runGoal(angleGoal), this); // .until(this::atGoal);
+    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal);
   }
 }
