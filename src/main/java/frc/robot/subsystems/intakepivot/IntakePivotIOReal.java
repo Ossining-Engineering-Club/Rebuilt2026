@@ -49,7 +49,7 @@ public class IntakePivotIOReal implements IntakePivotIO {
   @Override
   public void setVoltage(double voltage) {
     double appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
-    Logger.recordOutput("intake pivot set voltage", appliedVolts);
+    Logger.recordOutput("SetVoltages/IntakePivot", appliedVolts);
     sparkMax.setVoltage(appliedVolts);
   }
 }

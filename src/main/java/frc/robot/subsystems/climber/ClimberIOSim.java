@@ -32,7 +32,7 @@ public class ClimberIOSim implements ClimberIO {
   // @Override
   public void setVoltage(double voltage) {
     appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
-    Logger.recordOutput("climber set voltage", appliedVolts);
+    Logger.recordOutput("SetVoltages/Climber", appliedVolts);
     climberSim.setInputVoltage(appliedVolts);
   }
 

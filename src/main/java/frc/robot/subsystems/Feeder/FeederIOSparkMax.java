@@ -8,6 +8,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
+import org.littletonrobotics.junction.Logger;
 
 public class FeederIOSparkMax implements FeederIO {
   private final SparkMax feederMotor;
@@ -36,6 +38,8 @@ public class FeederIOSparkMax implements FeederIO {
 
   @Override
   public void setFeederMotorVoltage(double voltage) {
-    feederMotor.setVoltage(voltage);
+    double appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
+    Logger.recordOutput("SetVoltages/Feeder", appliedVolts);
+    feederMotor.setVoltage(appliedVolts);
   }
 }

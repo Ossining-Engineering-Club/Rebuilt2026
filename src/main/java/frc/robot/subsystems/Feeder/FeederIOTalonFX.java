@@ -6,6 +6,8 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
+import org.littletonrobotics.junction.Logger;
 
 public class FeederIOTalonFX implements FeederIO {
   private final TalonFX feederMotor;
@@ -31,6 +33,8 @@ public class FeederIOTalonFX implements FeederIO {
 
   @Override
   public void setFeederMotorVoltage(double voltage) {
-    feederMotor.setVoltage(voltage);
+    double appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
+    Logger.recordOutput("SetVoltages/Feeder", appliedVolts);
+    feederMotor.setVoltage(appliedVolts);
   }
 }

@@ -9,10 +9,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeAgitate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -22,10 +22,13 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intakepivot.IntakePivot;
-import frc.robot.subsystems.intakepivot.IntakePivotConstants;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -42,6 +45,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final IntakePivot intakePivot;
+  private final Turret turret;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -69,6 +73,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOReal());
+        turret = new Turret(new TurretIOReal());
         break;
 
       case SIM:
@@ -86,6 +91,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
+        turret = new Turret(new TurretIOSim());
         break;
 
       default:
@@ -99,6 +105,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
+        turret = new Turret(new TurretIO() {});
         break;
     }
 
@@ -154,9 +161,14 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    controller.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
-    controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
-    controller.b().whileTrue(new IntakeAgitate(intakePivot));
+    // controller.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
+    // controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
+    // controller.b().whileTrue(new IntakeAgitate(intakePivot));
+
+    controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(120)));
+    controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
+    controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
+    controller.b().onFalse(Commands.runOnce(() -> turret.setVoltage(0)));
   }
 
   private void configureFuelSim() {
@@ -210,7 +222,7 @@ public class RobotContainer {
     Logger.recordOutput(
         "Component Poses",
         new Pose3d[] {
-          new Pose3d(0.130175, 0.2032, 0.4468150068, new Rotation3d()),
+          new Pose3d(0.130175, 0.2032, 0.4468150068, new Rotation3d(0, 0, turret.getAngle())),
           new Pose3d(-0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)),
           new Pose3d(
               Math.max(

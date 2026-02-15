@@ -9,6 +9,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeRollersIOSparkMax implements IntakeRollersIO {
   private final SparkMax rollersMotor;
@@ -38,6 +40,8 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
 
   @Override
   public void setRollersMotorVoltage(double voltage) {
-    rollersMotor.setVoltage(voltage);
+    double appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
+    Logger.recordOutput("SetVoltages/IntakeRollers", appliedVolts);
+    rollersMotor.setVoltage(appliedVolts);
   }
 }

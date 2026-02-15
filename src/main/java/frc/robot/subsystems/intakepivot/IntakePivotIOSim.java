@@ -37,7 +37,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
   @Override
   public void setVoltage(double voltage) {
     appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
-    Logger.recordOutput("intake pivot set voltage", appliedVolts);
+    Logger.recordOutput("SetVoltages/IntakePivot", appliedVolts);
     intakePivotSim.setInputVoltage(appliedVolts);
   }
 

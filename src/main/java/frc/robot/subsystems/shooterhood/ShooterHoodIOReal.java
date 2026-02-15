@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterHoodIOReal implements ShooterHoodIO {
   private final SparkFlex hoodMotor;
@@ -42,5 +44,12 @@ public class ShooterHoodIOReal implements ShooterHoodIO {
     inputs.angleRadians = encoder.getPosition();
     inputs.statorCurrent = hoodMotor.getOutputCurrent();
     inputs.temperatureCelsius = hoodMotor.getMotorTemperature();
+  }
+
+  @Override
+  public void setVoltage(double voltage) {
+    double appliedVolts = MathUtil.clamp(voltage, -12.0, 12.0);
+    Logger.recordOutput("SetVoltages/ShooterHood", appliedVolts);
+    hoodMotor.setVoltage(appliedVolts);
   }
 }
