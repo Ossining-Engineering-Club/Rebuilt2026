@@ -9,10 +9,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeAgitate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -21,6 +21,11 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intakepivot.IntakePivot;
+import frc.robot.subsystems.intakepivot.IntakePivotConstants;
+import frc.robot.subsystems.intakepivot.IntakePivotIO;
+import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
+import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
 import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -36,6 +41,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final IntakePivot intakePivot;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -62,6 +68,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (robotPose) -> {});
+        intakePivot = new IntakePivot(new IntakePivotIOReal());
         break;
 
       case SIM:
@@ -69,6 +76,7 @@ public class RobotContainer {
         driveSimulation =
             new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        configureFuelSim();
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
@@ -77,7 +85,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        configureFuelSim();
+        intakePivot = new IntakePivot(new IntakePivotIOSim());
         break;
 
       default:
@@ -90,6 +98,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (robotPose) -> {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
         break;
     }
 
@@ -131,29 +140,23 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
-
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+    // Reset gyro to 0° when A button is pressed
+    // controller
+    //     .a()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+    //                 drive)
+    //             .ignoringDisable(true));
+
+    controller.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
+    controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
+    controller.b().whileTrue(new IntakeAgitate(intakePivot));
   }
 
   private void configureFuelSim() {
@@ -208,8 +211,15 @@ public class RobotContainer {
         "Component Poses",
         new Pose3d[] {
           new Pose3d(0.130175, 0.2032, 0.4468150068, new Rotation3d()),
-          new Pose3d(-0.254, 0, 0.2286, new Rotation3d()),
-          new Pose3d()
+          new Pose3d(-0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)),
+          new Pose3d(
+              Math.max(
+                  -0.284582 * Math.cos(intakePivot.getAngle() - Units.degreesToRadians(1.5343415))
+                      + 0.2115,
+                  0),
+              0,
+              0,
+              new Rotation3d())
         });
   }
 }

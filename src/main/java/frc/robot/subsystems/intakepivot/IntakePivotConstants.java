@@ -13,17 +13,23 @@ public class IntakePivotConstants {
   public static final double kD = 0.0;
   public static final double maxVelocity = Units.degreesToRadians(0);
   public static final double maxAcceleration = Units.degreesToRadians(0);
-  public static final double simP = 0.0;
+  public static final double simP = 20.0;
   public static final double simI = 0.0;
   public static final double simD = 0.0;
-  public static final double simMaxVelocity = Units.degreesToRadians(0);
-  public static final double simMaxAcceleration = Units.degreesToRadians(0);
-  public static final double pidTolerance = Units.degreesToRadians(0);
+  public static final double simMaxVelocity = Units.degreesToRadians(360);
+  public static final double simMaxAcceleration = Units.degreesToRadians(720);
+  public static final double pidTolerance = Units.degreesToRadians(0.5);
 
   // Angle Setpoints
-  public static final double maxAngle = Units.degreesToRadians(114.0);
+  public static final double maxAngle = Units.degreesToRadians(108.0);
   public static final double minAngle = Units.degreesToRadians(1.0);
-  public static final double startAngle = Units.degreesToRadians(114.0);
+  public static final double startAngle = Units.degreesToRadians(108.0);
+  public static final double extendedAngle = Units.degreesToRadians(1.0);
+  public static final double retractedAngle = Units.degreesToRadians(108.0);
+  public static final double agitationTopAngle = Units.degreesToRadians(15.0);
+  public static final double agitationBottomAngle = Units.degreesToRadians(1.0);
+
+  public static final double agitationPeriodSeconds = 0.75;
 
   // Motor Constants
   public static final int stallCurrentLimit = 38;

@@ -20,7 +20,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
             intakeLengthMeters,
             minAngle,
             maxAngle,
-            true,
+            false,
             startAngle);
 
     intakePivotSim.setState(startAngle, 0.0);

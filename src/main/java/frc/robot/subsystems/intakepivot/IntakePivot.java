@@ -18,7 +18,7 @@ public class IntakePivot extends SubsystemBase {
   private boolean usingPID = false;
   private int ticksSinceLastPID = 1000000;
 
-  private IntakePivot(IntakePivotIO io) {
+  public IntakePivot(IntakePivotIO io) {
     this.io = io;
 
     switch (Constants.currentMode) {
