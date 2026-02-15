@@ -1,7 +1,7 @@
 {
   "name": "OBots2026",
   "isFTC": false,
-  "disableSimplification": false,
+  "disableSimplification": true,
   "rotations": [
     {
       "axis": "x",
@@ -34,6 +34,23 @@
         -0.130175,
         -0.2032,
         -0.4468150068
+      ]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": -90
+        }
+      ],
+      "zeroedPosition": [
+        -0.2420507224,
+        -0.2032,
+        -0.5103150068
       ]
     },
     {

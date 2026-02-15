@@ -222,8 +222,18 @@ public class RobotContainer {
     Logger.recordOutput(
         "Component Poses",
         new Pose3d[] {
-          new Pose3d(0.130175, 0.2032, 0.4468150068, new Rotation3d(0, 0, turret.getAngle())),
-          new Pose3d(-0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)),
+          new Pose3d(
+              0.130175,
+              0.2032,
+              0.4468150068,
+              new Rotation3d(0, 0, turret.getAngle())), // Shooter Base
+          new Pose3d(
+              0.130175 + 0.1118757224 * Math.cos(turret.getAngle()),
+              0.2032 + 0.1118757224 * Math.sin(turret.getAngle()),
+              0.5103150068,
+              new Rotation3d(0, 0, turret.getAngle())), // Shooter Hood
+          new Pose3d(
+              -0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)), // Intake Pivot
           new Pose3d(
               Math.max(
                   -0.284582 * Math.cos(intakePivot.getAngle() - Units.degreesToRadians(1.5343415))
@@ -231,7 +241,7 @@ public class RobotContainer {
                   0),
               0,
               0,
-              new Rotation3d())
+              new Rotation3d()) // Hopper Extension
         });
   }
 }
