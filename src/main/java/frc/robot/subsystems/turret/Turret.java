@@ -93,8 +93,14 @@ public class Turret extends SubsystemBase {
   }
 
   public void runGoal(double angleGoal) {
-    if (angleGoal > maxAngle) angleGoal = maxAngle;
-    if (angleGoal < minAngle) angleGoal = minAngle;
+    if (angleGoal > maxAngle || angleGoal < minAngle) {
+      if ((angleGoal - maxAngle + 2 * Math.PI) % (2 * Math.PI)
+          < (minAngle - angleGoal + 2 * Math.PI) % (2 * Math.PI)) {
+        angleGoal = maxAngle;
+      } else {
+        angleGoal = minAngle;
+      }
+    }
 
     setVoltage(
         pid.calculate(getAngle(), angleGoal)
