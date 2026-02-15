@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 
 public final class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double maxSpeedMetersPerSec = 4.262253; // 5.24;
   public static final double odometryFrequency = 100.0;
   public static final double trackWidth = Units.inchesToMeters(24.75); // meters
   public static final double wheelBase = Units.inchesToMeters(18.75); // meters
@@ -35,7 +35,6 @@ public final class DriveConstants {
   public static final Current slipCurrent = Amps.of(120.0);
 
   // Drive motor configuration
-  public static final int driveMotorStatorCurrentLimit = 80;
   public static final double driveMotorReduction = 5.27 / 1.0;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60(1);
 
@@ -46,11 +45,11 @@ public final class DriveConstants {
   public static final double driveS = 0.13233;
   public static final double driveV = 0.81857;
   public static final double driveA = 0;
-  public static final double driveSimP = 0.0;
+  public static final double driveSimP = 0.1;
   public static final double driveSimI = 0.0;
   public static final double driveSimD = 0.0;
-  public static final double driveSimS = 0.04522;
-  public static final double driveSimV = 0.87475;
+  public static final double driveSimS = 0.07444;
+  public static final double driveSimV = 0.72619;
   public static final double driveSimA = 0;
 
   // Turn motor configuration
@@ -147,7 +146,7 @@ public final class DriveConstants {
               maxSpeedMetersPerSec,
               wheelCOF,
               DCMotor.getKrakenX60(1).withReduction(driveMotorReduction),
-              driveMotorStatorCurrentLimit,
+              slipCurrent.magnitude(),
               1),
           moduleTranslations);
 }
