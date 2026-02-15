@@ -69,7 +69,7 @@ public final class DriveConstants {
   public static final double turnS = 0;
   public static final double turnV = 0;
   public static final double turnA = 0;
-  public static final double turnSimP = 40;
+  public static final double turnSimP = 30;
   public static final double turnSimI = 0;
   public static final double turnSimD = 0;
   public static final double turnSimS = 0;
@@ -82,7 +82,7 @@ public final class DriveConstants {
   public static final MomentOfInertia steerInertia = KilogramSquareMeters.of(0.015);
   public static final MomentOfInertia driveInertia = KilogramSquareMeters.of(0.025);
   // Simulated voltage necessary to overcome friction
-  public static final Voltage steerFrictionVoltage = Volts.of(0.2);
+  public static final Voltage steerFrictionVoltage = Volts.of(0.8);
   public static final Voltage driveFrictionVoltage = Volts.of(0.2);
 
   public static final int pigeonId = 13;

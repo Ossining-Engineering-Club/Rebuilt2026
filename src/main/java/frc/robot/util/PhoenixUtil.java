@@ -125,13 +125,13 @@ public class PhoenixUtil {
         .withEncoderInverted(false)
         // Adjust drive motor gains for simulation
         .withDriveMotorGains(
-          new Slot0Configs()
-            .withKP(DriveConstants.driveSimP)
-            .withKI(DriveConstants.driveSimI)
-            .withKD(DriveConstants.driveSimD)
-            .withKS(DriveConstants.driveSimS)
-            .withKV(DriveConstants.driveSimV)
-            .withKA(DriveConstants.driveSimA))
+            new Slot0Configs()
+                .withKP(DriveConstants.driveSimP)
+                .withKI(DriveConstants.driveSimI)
+                .withKD(DriveConstants.driveSimD)
+                .withKS(DriveConstants.driveSimS)
+                .withKV(DriveConstants.driveSimV)
+                .withKA(DriveConstants.driveSimA))
         // Adjust steer motor PID gains for simulation
         .withSteerMotorGains(
             new Slot0Configs()
