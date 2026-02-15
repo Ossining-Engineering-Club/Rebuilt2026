@@ -123,15 +123,24 @@ public class PhoenixUtil {
         .withSteerMotorInverted(false)
         // Disable CanCoder inversion
         .withEncoderInverted(false)
+        // Adjust drive motor gains for simulation
+        .withDriveMotorGains(
+          new Slot0Configs()
+            .withKP(DriveConstants.driveSimP)
+            .withKI(DriveConstants.driveSimI)
+            .withKD(DriveConstants.driveSimD)
+            .withKS(DriveConstants.driveSimS)
+            .withKV(DriveConstants.driveSimV)
+            .withKA(DriveConstants.driveSimA))
         // Adjust steer motor PID gains for simulation
         .withSteerMotorGains(
             new Slot0Configs()
-                .withKP(1)
-                .withKI(0)
-                .withKD(0)
-                .withKS(0)
-                .withKV(0)
-                .withKA(0)
+                .withKP(DriveConstants.turnSimP)
+                .withKI(DriveConstants.turnSimI)
+                .withKD(DriveConstants.turnSimD)
+                .withKS(DriveConstants.turnSimS)
+                .withKV(DriveConstants.turnSimV)
+                .withKA(DriveConstants.turnSimA)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign))
         .withSteerMotorGearRatio(DriveConstants.turnMotorReduction)
         // Adjust friction voltages

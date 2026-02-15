@@ -56,10 +56,10 @@ public class Drive extends SubsystemBase {
                   turnGearbox,
                   driveMotorReduction,
                   turnMotorReduction,
-                  Volts.of(0.01),
-                  Volts.of(0.01),
+                  DriveConstants.driveFrictionVoltage,
+                  DriveConstants.steerFrictionVoltage,
                   Meters.of(wheelRadiusMeters),
-                  KilogramSquareMeters.of(0.01),
+                  DriveConstants.steerInertia,
                   wheelCOF))
           .withBumperSize(Inches.of(3 + 24 + 3), Inches.of(3 + 30 + 3));
 
