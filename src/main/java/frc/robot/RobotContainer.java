@@ -2,7 +2,9 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -199,5 +201,15 @@ public class RobotContainer {
 
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+  }
+
+  public void updateMechanismVisualization() {
+    Logger.recordOutput(
+        "Component Poses",
+        new Pose3d[] {
+          new Pose3d(0.130175, 0.2032, 0.4468150068, new Rotation3d()),
+          new Pose3d(-0.254, 0, 0.2286, new Rotation3d()),
+          new Pose3d()
+        });
   }
 }
