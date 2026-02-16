@@ -1,5 +1,8 @@
 package frc.robot.subsystems.vision;
 
+import static frc.robot.subsystems.vision.VisionConstants.*;
+
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -7,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.FieldConstants;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,13 +18,12 @@ import java.util.Set;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
-  private final VisionIO[] io;
+  private final VisionIO[] ios;
   private final VisionIOInputsAutoLogged[] inputs;
-  private int focusTag = 0;
 
-  public Vision(VisionIO... io) {
-    this.io = io;
-    inputs = new VisionIOInputsAutoLogged[io.length];
+  public Vision(VisionIO... ios) {
+    this.ios = ios;
+    inputs = new VisionIOInputsAutoLogged[ios.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
@@ -31,7 +34,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < ios.length; i++) {
       // updating vision io inputs
       ios[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/" + inputs[i].cameraName, inputs[i]);
+      Logger.processInputs("Vision/" + limelightNames[i], inputs[i]);
     }
   }
 
@@ -56,11 +59,11 @@ public class Vision extends SubsystemBase {
             && inputs[i].estimatedPose.getY() > 0.0
             && inputs[i].estimatedPose.getY() <= FieldConstants.fieldWidthMeters)) continue;
         // don't use if estimate is too high, or too tilted
-        if (Math.abs(inputs[i].estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
-        if (Math.abs(inputs[i].estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE)
-          continue;
-        if (Math.abs(inputs[i].estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE)
-          continue;
+        // if (Math.abs(inputs[i].estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
+        // if (Math.abs(inputs[i].estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE)
+        //   continue;
+        // if (Math.abs(inputs[i].estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE)
+        //   continue;
 
         double translationalDelta =
             Math.hypot(
@@ -68,85 +71,28 @@ public class Vision extends SubsystemBase {
                 inputs[i].estimatedPose.getY() - robotPose.getY());
 
         Matrix<N3, N1> stddevs =
-            getEstimationStdDevs(
-                inputs[i].estimatedPose.toPose2d(), inputs[i].tagIds, translationalDelta);
+            getEstimationStdDevs(inputs[i].estimatedPose, inputs[i].tagIds, translationalDelta);
 
         addedPose = true;
         Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Raw Vision", inputs[i].estimatedPose.toPose2d());
+            "/Vision/" + limelightNames[i] + "/Raw Vision", inputs[i].estimatedPose);
         Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Vision Timestamp", inputs[i].timestampSeconds);
+            "/Vision/" + limelightNames[i] + "/Vision Timestamp", inputs[i].timestampSeconds);
         Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Vision Std Dev",
+            "/Vision/" + limelightNames[i] + "/Vision Std Dev",
             new double[] {stddevs.get(0, 0), stddevs.get(1, 0), stddevs.get(2, 0)});
 
         estimates.add(
-            new PoseEstimate(
-                inputs[i].estimatedPose.toPose2d(), inputs[i].timestampSeconds, stddevs));
+            new PoseEstimate(inputs[i].estimatedPose, inputs[i].timestampSeconds, stddevs));
       }
       if (!addedPose) {
         Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Raw Vision",
+            "/Vision/" + limelightNames[i] + "/Raw Vision",
             new Pose2d(-1000, -1000, new Rotation2d()));
       }
     }
     // logging detected tags
     Logger.recordOutput("Detected Tag Poses", detectedTagPoses.toArray(Pose3d[]::new));
-
-    return estimates.toArray(PoseEstimate[]::new);
-  }
-
-  public PoseEstimate[] getFocusedEstimatedGlobalPoses(Pose2d robotPose) {
-    List<PoseEstimate> estimates = new ArrayList<>();
-    for (int i = 0; i < ios.length; i++) {
-      boolean addedPose = false;
-      if (inputs[i].seesFocusTag) {
-        // don't use if estimate is outside the field
-        if (!(inputs[i].focusedEstimatedPose.getX() > 0.0
-            && inputs[i].focusedEstimatedPose.getX() <= FieldConstants.fieldLengthMeters
-            && inputs[i].focusedEstimatedPose.getY() > 0.0
-            && inputs[i].focusedEstimatedPose.getY() <= FieldConstants.fieldWidthMeters)) continue;
-        // don't use if estimate is too high, or too tilted
-        if (Math.abs(inputs[i].focusedEstimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
-        if (Math.abs(inputs[i].focusedEstimatedPose.getRotation().getX())
-            > VisionConstants.MAX_ANGLE) continue;
-        if (Math.abs(inputs[i].focusedEstimatedPose.getRotation().getY())
-            > VisionConstants.MAX_ANGLE) continue;
-
-        double translationalDelta =
-            Math.hypot(
-                inputs[i].focusedEstimatedPose.getX() - robotPose.getX(),
-                inputs[i].focusedEstimatedPose.getY() - robotPose.getY());
-
-        Matrix<N3, N1> stddevs =
-            getEstimationStdDevs(
-                inputs[i].focusedEstimatedPose.toPose2d(),
-                new int[] {inputs[i].focusTag},
-                translationalDelta);
-
-        addedPose = true;
-        Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Focused Raw Vision",
-            inputs[i].focusedEstimatedPose.toPose2d());
-        Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Focused Vision Timestamp",
-            inputs[i].focusedTimestampSeconds);
-        Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Focused Vision Std Dev",
-            new double[] {stddevs.get(0, 0), stddevs.get(1, 0), stddevs.get(2, 0)});
-
-        estimates.add(
-            new PoseEstimate(
-                inputs[i].focusedEstimatedPose.toPose2d(),
-                inputs[i].focusedTimestampSeconds,
-                stddevs));
-      }
-      if (!addedPose) {
-        Logger.recordOutput(
-            "/Vision/" + inputs[i].cameraName + "/Focused Raw Vision",
-            new Pose2d(-1000, -1000, new Rotation2d()));
-      }
-    }
 
     return estimates.toArray(PoseEstimate[]::new);
   }
@@ -184,23 +130,5 @@ public class Vision extends SubsystemBase {
     if (VisionConstants.IGNORE_YAW) estStdDevs.set(2, 0, Double.MAX_VALUE);
 
     return estStdDevs;
-  }
-
-  public boolean seesFocusTag() {
-    for (int i = 0; i < inputs.length; i++) {
-      if (inputs[i].seesFocusTag) return true;
-    }
-    return false;
-  }
-
-  public void setFocusTag(int tag) {
-    focusTag = tag;
-    for (int i = 0; i < ios.length; i++) {
-      ios[i].setFocusTag(tag);
-    }
-  }
-
-  public int getFocusTag() {
-    return focusTag;
   }
 }

@@ -28,6 +28,11 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -43,6 +48,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Vision vision;
   private final IntakePivot intakePivot;
   private final Turret turret;
 
@@ -61,8 +67,10 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
-        // a CANcoder
+        vision =
+            new Vision(
+                new VisionIOReal(VisionConstants.limelightNames[0]),
+                new VisionIOReal(VisionConstants.limelightNames[1]));
         drive =
             new Drive(
                 new GyroIOPigeonIMU(),
@@ -70,6 +78,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight),
+                vision,
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOReal());
         turret = new Turret(new TurretIOReal());
@@ -81,6 +90,16 @@ public class RobotContainer {
             new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         configureFuelSim();
+        vision =
+            new Vision(
+                new VisionIOSim(
+                    VisionConstants.limelightNames[0],
+                    VisionConstants.frontLLRobotToCamOffset,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOSim(
+                    VisionConstants.limelightNames[1],
+                    VisionConstants.leftLLRobotToCamOffset,
+                    driveSimulation::getSimulatedDriveTrainPose));
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
@@ -88,6 +107,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
                 new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                vision,
                 driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         turret = new Turret(new TurretIOSim());
@@ -95,6 +115,8 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
+        vision =
+            new Vision(new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
         drive =
             new Drive(
                 new GyroIO() {},
@@ -102,6 +124,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
+                vision,
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         turret = new Turret(new TurretIO() {});
