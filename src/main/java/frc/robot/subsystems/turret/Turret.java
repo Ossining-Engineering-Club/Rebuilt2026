@@ -2,6 +2,7 @@ package frc.robot.subsystems.turret;
 
 import static frc.robot.subsystems.turret.TurretConstants.*;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -15,7 +16,11 @@ import org.littletonrobotics.junction.Logger;
 public class Turret extends SubsystemBase {
   private final TurretIO io;
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
-  private final ProfiledPIDController pid;
+  private final ProfiledPIDController
+      mainPID; // main PID generates the motion profile and handles tolerances
+  private final PIDController
+      secondaryPID; // secondary PID calculates the feedback output using the main PID's motion
+  // profile
   private final SimpleMotorFeedforward feedforward;
 
   private boolean usingPID = false;
@@ -28,38 +33,39 @@ public class Turret extends SubsystemBase {
 
     switch (Constants.currentMode) {
       case REAL:
-        pid =
+        mainPID =
             new ProfiledPIDController(
-                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                0, 0, 0, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        secondaryPID = new PIDController(kP, kI, kD);
         feedforward = new SimpleMotorFeedforward(kS, kV, kA);
         break;
       case SIM:
-        pid =
+        mainPID =
             new ProfiledPIDController(
-                simP,
-                simI,
-                simD,
-                new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration));
+                0, 0, 0, new TrapezoidProfile.Constraints(simMaxVelocity, simMaxAcceleration));
+        secondaryPID = new PIDController(simP, simI, simD);
         feedforward = new SimpleMotorFeedforward(simS, simV, simA);
         break;
       case REPLAY:
-        pid =
+        mainPID =
             new ProfiledPIDController(
-                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                0, 0, 0, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        secondaryPID = new PIDController(kP, kI, kD);
         feedforward = new SimpleMotorFeedforward(kS, kV, kA);
         break;
       default:
-        pid =
+        mainPID =
             new ProfiledPIDController(
-                kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+                0, 0, 0, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        secondaryPID = new PIDController(kP, kI, kD);
         feedforward = new SimpleMotorFeedforward(kS, kV, kA);
         break;
     }
 
     io.updateInputs(inputs);
-    pid.reset(inputs.angleRadians);
+    mainPID.reset(inputs.angleRadians);
 
-    pid.setTolerance(pidTolerance);
+    mainPID.setTolerance(pidTolerance);
   }
 
   @Override
@@ -68,16 +74,16 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("Turret", inputs);
 
     Logger.recordOutput("Turret Angle", getAngle());
-    Logger.recordOutput("Turret Setpoint", pid.getSetpoint().position);
-    Logger.recordOutput("Turret Setpoint Velocity", pid.getSetpoint().velocity);
+    Logger.recordOutput("Turret Setpoint", mainPID.getSetpoint().position);
+    Logger.recordOutput("Turret Setpoint Velocity", mainPID.getSetpoint().velocity);
 
     if (ticksSinceLastPID >= 2) usingPID = false;
     else usingPID = true;
     ticksSinceLastPID++;
 
     if (!usingPID) {
-      pid.reset(getAngle(), getAngularVelocity());
-      prevSetpointVelocity = pid.getSetpoint().velocity;
+      mainPID.reset(getAngle(), getAngularVelocity());
+      prevSetpointVelocity = mainPID.getSetpoint().velocity;
     }
 
     // Soft Limits
@@ -103,17 +109,20 @@ public class Turret extends SubsystemBase {
       }
     }
 
+    double pidOutput = secondaryPID.calculate(getAngle(), mainPID.getSetpoint().position);
+    mainPID.calculate(getAngle(), angleGoal);
+
     setVoltage(
-        pid.calculate(getAngle(), angleGoal)
+        pidOutput
             + feedforward.calculateWithVelocities(
-                prevSetpointVelocity, pid.getSetpoint().velocity));
+                prevSetpointVelocity, mainPID.getSetpoint().velocity));
 
     ticksSinceLastPID = 0;
-    prevSetpointVelocity = pid.getSetpoint().velocity;
+    prevSetpointVelocity = mainPID.getSetpoint().velocity;
   }
 
   public boolean atGoal() {
-    return pid.atGoal();
+    return mainPID.atGoal();
   }
 
   public void stop() {

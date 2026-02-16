@@ -22,14 +22,14 @@ public class TurretConstants {
   public static final double kA = 0.0;
   public static final double maxVelocity = Units.degreesToRadians(360.0);
   public static final double maxAcceleration = Units.degreesToRadians(720.0);
-  public static final double simP = 5; // 5.0;
+  public static final double simP = 50;
   public static final double simI = 0;
-  public static final double simD = 0.1;
+  public static final double simD = 0;
   public static final double simS = 0.0;
-  public static final double simV = 0.86; // 2.4;
+  public static final double simV = 0.86;
   public static final double simA = 0.003;
-  public static final double simMaxVelocity = Units.degreesToRadians(800); // (288.0);
-  public static final double simMaxAcceleration = Units.degreesToRadians(3600); // (1800.0);
+  public static final double simMaxVelocity = Units.degreesToRadians(800);
+  public static final double simMaxAcceleration = Units.degreesToRadians(3600);
   public static final double pidTolerance = Units.degreesToRadians(0.5);
 
   // angle limits
