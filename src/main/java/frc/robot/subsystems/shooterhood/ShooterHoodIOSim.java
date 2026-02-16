@@ -1,5 +1,3 @@
 package frc.robot.subsystems.shooterhood;
 
-public class ShooterHoodIOSim {
-    
-}
+public class ShooterHoodIOSim {}
