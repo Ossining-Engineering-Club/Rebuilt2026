@@ -2,21 +2,36 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOPigeonIMU;
+import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intakepivot.IntakePivot;
+import frc.robot.subsystems.intakepivot.IntakePivotIO;
+import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
+import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.util.FuelSim;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -28,12 +43,18 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final IntakePivot intakePivot;
+  private final Turret turret;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // Sim objects
+  private SwerveDriveSimulation driveSimulation = null;
+  private FuelSim fuelSim = null;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -44,40 +65,32 @@ public class RobotContainer {
         // a CANcoder
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new GyroIOPigeonIMU(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
-
-        // The ModuleIOTalonFXS implementation provides an example implementation for
-        // TalonFXS controller connected to a CANdi with a PWM encoder. The
-        // implementations
-        // of ModuleIOTalonFX, ModuleIOTalonFXS, and ModuleIOSpark (from the Spark
-        // swerve
-        // template) can be freely intermixed to support alternative hardware
-        // arrangements.
-        // Please see the AdvantageKit template documentation for more information:
-        // https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations
-        //
-        // drive =
-        // new Drive(
-        // new GyroIOPigeon2(),
-        // new ModuleIOTalonFXS(TunerConstants.FrontLeft),
-        // new ModuleIOTalonFXS(TunerConstants.FrontRight),
-        // new ModuleIOTalonFXS(TunerConstants.BackLeft),
-        // new ModuleIOTalonFXS(TunerConstants.BackRight));
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                (robotPose) -> {});
+        intakePivot = new IntakePivot(new IntakePivotIOReal());
+        turret = new Turret(new TurretIOReal());
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        configureFuelSim();
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
+        intakePivot = new IntakePivot(new IntakePivotIOSim());
+        turret = new Turret(new TurretIOSim());
         break;
 
       default:
@@ -88,7 +101,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                (robotPose) -> {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
+        turret = new Turret(new TurretIO() {});
         break;
     }
 
@@ -130,29 +146,50 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
-
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+    // Reset gyro to 0° when A button is pressed
+    // controller
+    //     .a()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+    //                 drive)
+    //             .ignoringDisable(true));
+
+    // controller.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
+    // controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
+    // controller.b().whileTrue(new IntakeAgitate(intakePivot));
+
+    controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
+    controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
+    controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
+  }
+
+  private void configureFuelSim() {
+    fuelSim = new FuelSim();
+    fuelSim.spawnStartingFuel();
+
+    fuelSim.registerRobot(
+        Units.inchesToMeters(3 + 30 + 3),
+        Units.inchesToMeters(3 + 24 + 3),
+        Units.inchesToMeters(6.75),
+        driveSimulation::getSimulatedDriveTrainPose,
+        driveSimulation::getDriveTrainSimulatedChassisSpeedsFieldRelative);
+
+    fuelSim.registerIntake(
+        Units.inchesToMeters(-21.27965),
+        Units.inchesToMeters(-15),
+        Units.inchesToMeters(-12.75),
+        Units.inchesToMeters(13.0625),
+        () -> true);
+
+    fuelSim.enableAirResistance();
+
+    fuelSim.start();
   }
 
   /**
@@ -162,5 +199,47 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void resetSimState() {
+    fuelSim.clearFuel();
+    fuelSim.spawnStartingFuel();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    fuelSim.updateSim();
+
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+  }
+
+  public void updateMechanismVisualization() {
+    Logger.recordOutput(
+        "Component Poses",
+        new Pose3d[] {
+          new Pose3d(
+              0.130175,
+              0.2032,
+              0.4468150068,
+              new Rotation3d(0, 0, turret.getAngle())), // Shooter Base
+          new Pose3d(
+              0.130175 + 0.1118757224 * Math.cos(turret.getAngle()),
+              0.2032 + 0.1118757224 * Math.sin(turret.getAngle()),
+              0.5103150068,
+              new Rotation3d(0, 0, turret.getAngle())), // Shooter Hood
+          new Pose3d(
+              -0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)), // Intake Pivot
+          new Pose3d(
+              Math.max(
+                  -0.284582 * Math.cos(intakePivot.getAngle() - Units.degreesToRadians(1.5343415))
+                      + 0.2115,
+                  0),
+              0,
+              0,
+              new Rotation3d()) // Hopper Extension
+        });
   }
 }
