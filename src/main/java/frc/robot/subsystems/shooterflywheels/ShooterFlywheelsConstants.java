@@ -16,11 +16,11 @@ public class ShooterFlywheelsConstants {
   public static final double kD = 0.0;
   public static final double kS = 0.0;
   public static final double kV = 0.0;
-  public static final double simP = 0.0;
+  public static final double simP = 0.003;
   public static final double simI = 0.0;
   public static final double simD = 0.0;
   public static final double simS = 0.0;
-  public static final double simV = 0.0;
+  public static final double simV = 0.00177;
 
   // sim settings
   public static final DCMotor gearbox = DCMotor.getKrakenX60(2);

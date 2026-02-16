@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -24,6 +25,10 @@ import frc.robot.subsystems.intakepivot.IntakePivot;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
+import frc.robot.subsystems.shooterflywheels.ShooterFlywheels;
+import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIO;
+import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOReal;
+import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOSim;
 import frc.robot.subsystems.shooterhood.ShooterHood;
 import frc.robot.subsystems.shooterhood.ShooterHoodIO;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
@@ -56,6 +61,7 @@ public class RobotContainer {
   private final IntakePivot intakePivot;
   private final Turret turret;
   private final ShooterHood shooterHood;
+  private final ShooterFlywheels shooterFlywheels;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -88,6 +94,7 @@ public class RobotContainer {
         intakePivot = new IntakePivot(new IntakePivotIOReal());
         turret = new Turret(new TurretIOReal());
         shooterHood = new ShooterHood(new ShooterHoodIOReal());
+        shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOReal());
         break;
 
       case SIM:
@@ -118,6 +125,7 @@ public class RobotContainer {
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         turret = new Turret(new TurretIOSim());
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
+        shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOSim());
         break;
 
       default:
@@ -136,6 +144,7 @@ public class RobotContainer {
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         turret = new Turret(new TurretIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
+        shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIO() {});
         break;
     }
 
@@ -199,9 +208,13 @@ public class RobotContainer {
     // controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
     // controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
 
-    controller.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
-    controller.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
-    controller.b().whileTrue(shooterHood.trackAngle(() -> drive.getRotation().getRadians()));
+    // controller.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
+    // controller.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+    // controller.b().whileTrue(shooterHood.trackAngle(() -> drive.getRotation().getRadians()));
+
+    controller.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
+    controller.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
+    controller.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
   }
 
   private void configureFuelSim() {

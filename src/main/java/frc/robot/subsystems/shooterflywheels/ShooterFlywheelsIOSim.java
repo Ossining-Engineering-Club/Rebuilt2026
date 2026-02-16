@@ -27,7 +27,7 @@ public class ShooterFlywheelsIOSim implements ShooterFlywheelsIO {
     if (closedLoop) {
       appliedVolts =
           pid.calculate(flywheelSim.getAngularVelocityRPM())
-              + feedforward.calculate(flywheelSim.getAngularVelocityRPM());
+              + feedforward.calculate(pid.getSetpoint());
     } else {
       pid.reset();
     }
