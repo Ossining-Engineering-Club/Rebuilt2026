@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimate;
@@ -197,7 +198,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Correct odometry with vision
-    updateEstimates(vision.getEstimatedGlobalPoses(getPose()));
+    updateEstimates(vision.getEstimatedGlobalPoses(getPose(), isRobotOverBump()));
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
@@ -350,5 +351,22 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  /** Returns whether the robot's wheels are touching the bump */
+  @AutoLogOutput(key = "isRobotOverBump")
+  public boolean isRobotOverBump() {
+    var pose = getPose();
+    if ((pose.getX() >= FieldConstants.blueBumpMinX
+            && pose.getX() <= FieldConstants.blueBumpMaxX
+            && pose.getY() >= FieldConstants.blueBumpMinY
+            && pose.getY() <= FieldConstants.blueBumpMaxY)
+        || (pose.getX() >= FieldConstants.redBumpMinX
+            && pose.getX() <= FieldConstants.redBumpMaxX
+            && pose.getY() >= FieldConstants.redBumpMinY
+            && pose.getY() <= FieldConstants.redBumpMaxY)) {
+      return true;
+    }
+    return false;
   }
 }

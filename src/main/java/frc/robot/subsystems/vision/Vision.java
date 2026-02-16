@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
     }
   }
 
-  public PoseEstimate[] getEstimatedGlobalPoses(Pose2d robotPose) {
+  public PoseEstimate[] getEstimatedGlobalPoses(Pose2d robotPose, boolean isRobotOverBump) {
     List<PoseEstimate> estimates = new ArrayList<>();
     Set<Pose3d> detectedTagPoses = new HashSet<Pose3d>();
     for (int i = 0; i < ios.length; i++) {
@@ -71,7 +71,8 @@ public class Vision extends SubsystemBase {
                 inputs[i].estimatedPose.getY() - robotPose.getY());
 
         Matrix<N3, N1> stddevs =
-            getEstimationStdDevs(inputs[i].estimatedPose, inputs[i].tagIds, translationalDelta);
+            getEstimationStdDevs(
+                inputs[i].estimatedPose, inputs[i].tagIds, translationalDelta, isRobotOverBump);
 
         addedPose = true;
         Logger.recordOutput(
@@ -98,7 +99,12 @@ public class Vision extends SubsystemBase {
   }
 
   public Matrix<N3, N1> getEstimationStdDevs(
-      Pose2d estimatedPose, int[] tagIds, double translationalDelta) {
+      Pose2d estimatedPose, int[] tagIds, double translationalDelta, boolean isRobotOverBump) {
+    // if the robot is over a bump, fully trust vision
+    if (isRobotOverBump == true) {
+      return VecBuilder.fill(0, 0, 0);
+    }
+
     var estStdDevs = VisionConstants.SINGLE_TAG_STD_DEVS;
     int numTags = 0;
     double avgDist = 0;
