@@ -69,6 +69,7 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret Angle", getAngle());
     Logger.recordOutput("Turret Setpoint", pid.getSetpoint().position);
+    Logger.recordOutput("Turret Setpoint Velocity", pid.getSetpoint().velocity);
 
     if (ticksSinceLastPID >= 2) usingPID = false;
     else usingPID = true;
@@ -136,6 +137,6 @@ public class Turret extends SubsystemBase {
   }
 
   public Command goToAngle(double angleGoal) {
-    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal);
+    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal).finallyDo(() -> stop());
   }
 }

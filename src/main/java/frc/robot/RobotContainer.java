@@ -164,7 +164,7 @@ public class RobotContainer {
     // controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
     // controller.b().whileTrue(new IntakeAgitate(intakePivot));
 
-    controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(120)));
+    controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
     controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
     controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
   }

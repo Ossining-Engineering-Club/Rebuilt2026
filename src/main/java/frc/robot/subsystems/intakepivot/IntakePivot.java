@@ -106,6 +106,6 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public Command goToAngle(double angleGoal) {
-    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal);
+    return Commands.run(() -> runGoal(angleGoal), this).until(this::atGoal).finallyDo(() -> stop());
   }
 }
