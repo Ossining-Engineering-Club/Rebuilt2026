@@ -33,8 +33,8 @@ public class ShooterHoodConstants {
   public static final double maxAngle = Units.degreesToRadians(0.0);
   public static final double minAngle = 0.0;
   public static final double startAngle = 0.0;
-  
-  //Sim settings
+
+  // Sim settings
   public static final DCMotor gearbox = DCMotor.getNeoVortex(1);
   public static final double hoodMOI = 0.0;
 }

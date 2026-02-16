@@ -2,7 +2,6 @@ package frc.robot.subsystems.spindexer;
 
 import static frc.robot.subsystems.spindexer.SpindexerConstants.*;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
-import static frc.robot.util.SparkUtil.tryUntilOk;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
