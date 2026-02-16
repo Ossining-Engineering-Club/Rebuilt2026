@@ -24,6 +24,10 @@ import frc.robot.subsystems.intakepivot.IntakePivot;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
+import frc.robot.subsystems.shooterhood.ShooterHood;
+import frc.robot.subsystems.shooterhood.ShooterHoodIO;
+import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
+import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
@@ -51,6 +55,7 @@ public class RobotContainer {
   private final Vision vision;
   private final IntakePivot intakePivot;
   private final Turret turret;
+  private final ShooterHood shooterHood;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -82,6 +87,7 @@ public class RobotContainer {
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOReal());
         turret = new Turret(new TurretIOReal());
+        shooterHood = new ShooterHood(new ShooterHoodIOReal());
         break;
 
       case SIM:
@@ -111,6 +117,7 @@ public class RobotContainer {
                 driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         turret = new Turret(new TurretIOSim());
+        shooterHood = new ShooterHood(new ShooterHoodIOSim());
         break;
 
       default:
@@ -128,6 +135,7 @@ public class RobotContainer {
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         turret = new Turret(new TurretIO() {});
+        shooterHood = new ShooterHood(new ShooterHoodIO() {});
         break;
     }
 
@@ -187,9 +195,13 @@ public class RobotContainer {
     // controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
     // controller.b().whileTrue(new IntakeAgitate(intakePivot));
 
-    controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
-    controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
-    controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
+    // controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
+    // controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
+    // controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
+
+    controller.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
+    controller.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+    controller.b().whileTrue(shooterHood.trackAngle(() -> drive.getRotation().getRadians()));
   }
 
   private void configureFuelSim() {
@@ -252,7 +264,10 @@ public class RobotContainer {
               0.130175 + 0.1118757224 * Math.cos(turret.getAngle()),
               0.2032 + 0.1118757224 * Math.sin(turret.getAngle()),
               0.5103150068,
-              new Rotation3d(0, 0, turret.getAngle())), // Shooter Hood
+              new Rotation3d(
+                  0,
+                  (Math.PI / 2 - shooterHood.getAngle()) - Units.degreesToRadians(24),
+                  turret.getAngle())), // Shooter Hood
           new Pose3d(
               -0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)), // Intake Pivot
           new Pose3d(
