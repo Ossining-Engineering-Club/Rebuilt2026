@@ -18,6 +18,8 @@ public class ShooterFlywheels extends SubsystemBase {
 
   private ShooterFlywheelsState state;
 
+  private double rpmSetpoint = 0;
+
   /** Shooter Flywheels construction */
   public ShooterFlywheels(ShooterFlywheelsIO io) {
     this.io = io;
@@ -34,6 +36,7 @@ public class ShooterFlywheels extends SubsystemBase {
 
   /** Sets RPM of flywheel for velocity control */
   public void setRPM(double RPM) {
+    rpmSetpoint = RPM;
     if (RPM == 0.0) {
       // if requested RPM is 0, just set the voltage to 0 rather than using velocity control
       stop();
@@ -47,6 +50,7 @@ public class ShooterFlywheels extends SubsystemBase {
 
   /** Stops flywheel */
   public void stop() {
+    rpmSetpoint = 0;
     Logger.recordOutput("Shooter RPM Setpoint", 0);
     state = ShooterFlywheelsState.STOPPED;
     io.setVoltage(0.0);
@@ -62,6 +66,10 @@ public class ShooterFlywheels extends SubsystemBase {
 
   public double getRPM() {
     return inputs.RPM;
+  }
+
+  public double getRPMSetpoint() {
+    return rpmSetpoint;
   }
 
   public ShooterFlywheelsState getState() {

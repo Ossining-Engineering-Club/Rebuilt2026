@@ -79,7 +79,8 @@ public class RobotContainer {
   private final Feeder feeder;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -220,15 +221,15 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when A button is pressed
-    // controller
+    // driverController
     //     .a()
     //     .onTrue(
     //         Commands.runOnce(
@@ -238,32 +239,33 @@ public class RobotContainer {
     //                 drive)
     //             .ignoringDisable(true));
 
-    // controller.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
-    // controller.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
-    // controller.b().whileTrue(new IntakeAgitate(intakePivot));
+    // driverController.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
+    // driverController.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
+    // driverController.b().whileTrue(new IntakeAgitate(intakePivot));
 
-    // controller.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
-    // controller.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
-    // controller.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
+    // driverController.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
+    // driverController.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
+    // driverController.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
 
-    // controller.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
-    // controller.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
-    // controller.b().whileTrue(shooterHood.trackAngle(() -> drive.getRotation().getRadians()));
+    // driverController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
+    // driverController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+    // driverController.b().whileTrue(shooterHood.trackAngle(() ->
+    // drive.getRotation().getRadians()));
 
-    // controller.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
-    // controller.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
-    // controller.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
+    // driverController.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
+    // driverController.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
+    // driverController.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
 
-    controller.a().onTrue(intakePivot.retract());
-    controller.b().toggleOnTrue(intakePivot.extend());
+    driverController.a().onTrue(intakePivot.retract());
+    driverController.b().toggleOnTrue(intakePivot.extend());
 
-    controller.leftBumper().onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
-    controller.leftBumper().onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+    driverController.leftBumper().onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
+    driverController.leftBumper().onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
 
-    controller
+    driverController
         .rightBumper()
         .whileTrue(
-            Commands.runOnce(() -> shooterFlywheels.setRPM(1500))
+            Commands.runOnce(() -> shooterFlywheels.setRPM(2112))
                 .andThen(Commands.waitSeconds(0.5))
                 .andThen(
                     Commands.runOnce(
@@ -271,7 +273,7 @@ public class RobotContainer {
                           spindexer.startMotor();
                           feeder.startMotor();
                         })));
-    controller
+    driverController
         .rightBumper()
         .onFalse(
             Commands.runOnce(
@@ -281,14 +283,22 @@ public class RobotContainer {
                   feeder.stopMotor();
                 }));
 
-    controller.x().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(1)));
-    controller.x().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
-    controller.y().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-1)));
-    controller.y().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
+    driverController.x().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(1)));
+    driverController.x().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
+    driverController.y().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-1)));
+    driverController.y().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
+
+    // shooterFlywheels.setDefaultCommand(
+    //     Commands.runOnce(
+    //         () ->
+    //             shooterFlywheels.setRPM(
+    //                 shooterFlywheels.getRPMSetpoint()
+    //                     + 10 * (-MathUtil.applyDeadband(operatorController.getLeftY(), 0.1))),
+    //         shooterFlywheels));
   }
 
   private void configureFuelSim() {
-    fuelSim.spawnStartingFuel();
+    // fuelSim.spawnStartingFuel();
 
     fuelSim.registerRobot(
         Units.inchesToMeters(3 + 30 + 3),

@@ -88,7 +88,7 @@ public class SimulationManager {
         Radians.of(shooterHood.getAngle()),
         Radians.of(turret.getAngle()),
         Constants.shooterOffset);
-    fuelCount--;
+    // fuelCount--;
   }
 
   @AutoLogOutput(key = "isShooting")
