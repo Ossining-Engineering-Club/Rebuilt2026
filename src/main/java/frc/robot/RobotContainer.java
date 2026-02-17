@@ -254,8 +254,8 @@ public class RobotContainer {
     // controller.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
     // controller.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
 
-    controller.back().onTrue(intakePivot.retract());
-    controller.start().toggleOnTrue(intakePivot.extend());
+    controller.a().onTrue(intakePivot.retract());
+    controller.b().toggleOnTrue(intakePivot.extend());
 
     controller.leftBumper().onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
     controller.leftBumper().onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));

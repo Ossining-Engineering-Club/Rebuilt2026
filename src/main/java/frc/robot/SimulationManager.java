@@ -1,6 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
@@ -88,7 +87,7 @@ public class SimulationManager {
                 * SHOOTER_EXIT_VELOCITY_SCALAR),
         Radians.of(shooterHood.getAngle()),
         Radians.of(turret.getAngle()),
-        Meters.of(0.5103150068));
+        Constants.shooterOffset);
     fuelCount--;
   }
 
