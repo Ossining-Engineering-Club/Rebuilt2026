@@ -61,6 +61,7 @@ public class Drive extends SubsystemBase {
                   Meters.of(wheelRadiusMeters),
                   DriveConstants.steerInertia,
                   wheelCOF))
+          .withTrackLengthTrackWidth(Meters.of(wheelBase), Meters.of(trackWidth))
           .withBumperSize(Inches.of(3 + 24 + 3), Inches.of(3 + 30 + 3));
 
   static final Lock odometryLock = new ReentrantLock();

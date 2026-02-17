@@ -21,10 +21,18 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intakepivot.IntakePivot;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOReal;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
+import frc.robot.subsystems.intakerollers.IntakeRollers;
+import frc.robot.subsystems.intakerollers.IntakeRollersIO;
+import frc.robot.subsystems.intakerollers.IntakeRollersIOSim;
+import frc.robot.subsystems.intakerollers.IntakeRollersIOTalonFX;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheels;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIO;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOReal;
@@ -33,6 +41,10 @@ import frc.robot.subsystems.shooterhood.ShooterHood;
 import frc.robot.subsystems.shooterhood.ShooterHoodIO;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
@@ -62,6 +74,9 @@ public class RobotContainer {
   private final Turret turret;
   private final ShooterHood shooterHood;
   private final ShooterFlywheels shooterFlywheels;
+  private final IntakeRollers intakeRollers;
+  private final Spindexer spindexer;
+  private final Feeder feeder;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -72,6 +87,7 @@ public class RobotContainer {
   // Sim objects
   private SwerveDriveSimulation driveSimulation = null;
   private FuelSim fuelSim = null;
+  private SimulationManager simulationManager = null;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -95,6 +111,9 @@ public class RobotContainer {
         turret = new Turret(new TurretIOReal());
         shooterHood = new ShooterHood(new ShooterHoodIOReal());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOReal());
+        intakeRollers = new IntakeRollers(new IntakeRollersIOTalonFX());
+        spindexer = new Spindexer(new SpindexerIOReal());
+        feeder = new Feeder(new FeederIOTalonFX());
         break;
 
       case SIM:
@@ -102,7 +121,8 @@ public class RobotContainer {
         driveSimulation =
             new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-        configureFuelSim();
+        fuelSim = new FuelSim();
+
         vision =
             new Vision(
                 new VisionIOSim(
@@ -126,6 +146,21 @@ public class RobotContainer {
         turret = new Turret(new TurretIOSim());
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOSim());
+        intakeRollers = new IntakeRollers(new IntakeRollersIOSim());
+        spindexer = new Spindexer(new SpindexerIOSim());
+        feeder = new Feeder(new FeederIOSim());
+
+        simulationManager =
+            new SimulationManager(
+                fuelSim,
+                shooterFlywheels,
+                shooterHood,
+                intakePivot,
+                intakeRollers,
+                spindexer,
+                turret,
+                feeder);
+        configureFuelSim();
         break;
 
       default:
@@ -145,6 +180,9 @@ public class RobotContainer {
         turret = new Turret(new TurretIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIO() {});
+        intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
+        feeder = new Feeder(new FeederIO() {});
         break;
     }
 
@@ -212,13 +250,44 @@ public class RobotContainer {
     // controller.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
     // controller.b().whileTrue(shooterHood.trackAngle(() -> drive.getRotation().getRadians()));
 
-    controller.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
-    controller.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
-    controller.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
+    // controller.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
+    // controller.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
+    // controller.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
+
+    controller.back().onTrue(intakePivot.retract());
+    controller.start().toggleOnTrue(intakePivot.extend());
+
+    controller.leftBumper().onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
+    controller.leftBumper().onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+
+    controller
+        .rightBumper()
+        .whileTrue(
+            Commands.runOnce(() -> shooterFlywheels.setRPM(1500))
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(
+                    Commands.runOnce(
+                        () -> {
+                          spindexer.startMotor();
+                          feeder.startMotor();
+                        })));
+    controller
+        .rightBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  shooterFlywheels.setRPM(0);
+                  spindexer.stopMotor();
+                  feeder.stopMotor();
+                }));
+
+    controller.x().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(1)));
+    controller.x().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
+    controller.y().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-1)));
+    controller.y().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
   }
 
   private void configureFuelSim() {
-    fuelSim = new FuelSim();
     fuelSim.spawnStartingFuel();
 
     fuelSim.registerRobot(
@@ -233,7 +302,8 @@ public class RobotContainer {
         Units.inchesToMeters(-15),
         Units.inchesToMeters(-12.75),
         Units.inchesToMeters(13.0625),
-        () -> true);
+        simulationManager::isIntaking,
+        simulationManager::incrementFuelCount);
 
     fuelSim.enableAirResistance();
 
@@ -258,6 +328,7 @@ public class RobotContainer {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
     SimulatedArena.getInstance().simulationPeriodic();
+    simulationManager.periodic();
     fuelSim.updateSim();
 
     Logger.recordOutput(
