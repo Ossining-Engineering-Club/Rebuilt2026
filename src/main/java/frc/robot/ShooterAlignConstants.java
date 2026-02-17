@@ -4,11 +4,29 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterAlignConstants {
+  public static class Real {
+    public static final double minDist = 0;
+    public static final double switchToHoodControlDist = 0;
+    public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap shooterHoodMap =
+        new InterpolatingDoubleTreeMap();
+
+    static {
+      shooterRPMMap.put(0.0, 0.0);
+    }
+
+    static {
+      shooterHoodMap.put(0.0, Units.degreesToRadians(0));
+    }
+  }
+
   public static class Sim {
     public static final double minDist = 2;
     public static final double switchToHoodControlDist = 5;
     public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
-    public static final InterpolatingDoubleTreeMap shooterHoodMap = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap shooterHoodMap =
+        new InterpolatingDoubleTreeMap();
+
     static {
       shooterRPMMap.put(2.0, 1408.525);
       shooterRPMMap.put(2.5, 1518.438);
@@ -19,6 +37,7 @@ public class ShooterAlignConstants {
       shooterRPMMap.put(5.5, 2112.0);
       shooterRPMMap.put(6.0, 2112.0);
     }
+
     static {
       shooterHoodMap.put(2.0, Units.degreesToRadians(66));
       shooterHoodMap.put(2.5, Units.degreesToRadians(66));

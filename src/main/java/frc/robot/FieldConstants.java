@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class FieldConstants {
@@ -16,4 +19,9 @@ public class FieldConstants {
   public static final double redBumpMaxX = 12.860;
   public static final double redBumpMinY = 1.974;
   public static final double redBumpMaxY = 6.099;
+
+  public static final Translation2d blueHub =
+      new Translation2d(Inches.of(182.11), Inches.of(158.84));
+  public static final Translation2d redHub =
+      new Translation2d(Inches.of(469.11), Inches.of(158.84));
 }

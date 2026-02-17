@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShooterAlignStationary;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -259,26 +260,31 @@ public class RobotContainer {
     driverController.a().onTrue(intakePivot.retract());
     driverController.b().toggleOnTrue(intakePivot.extend());
 
-    driverController.leftBumper().onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
-    driverController.leftBumper().onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+    driverController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
+    driverController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+
+    driverController
+        .leftBumper()
+        .whileTrue(
+            new ShooterAlignStationary(drive::getPose, turret, shooterFlywheels, shooterHood));
 
     driverController
         .rightBumper()
         .whileTrue(
-            Commands.runOnce(() -> shooterFlywheels.setRPM(2112))
-                .andThen(Commands.waitSeconds(0.5))
-                .andThen(
-                    Commands.runOnce(
-                        () -> {
-                          spindexer.startMotor();
-                          feeder.startMotor();
-                        })));
+            // Commands.runOnce(() -> shooterFlywheels.setRPM(2112))
+            //     .andThen(Commands.waitSeconds(0.5))
+            //     .andThen(
+            Commands.runOnce(
+                () -> {
+                  spindexer.startMotor();
+                  feeder.startMotor();
+                }));
     driverController
         .rightBumper()
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheels.setRPM(0);
+                  // shooterFlywheels.setRPM(0);
                   spindexer.stopMotor();
                   feeder.stopMotor();
                 }));
