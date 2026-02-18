@@ -64,12 +64,15 @@ public class ShooterAlignStationary extends Command {
       desiredHoodAngle = ShooterAlignConstants.Real.shooterHoodMap.get(distance);
     }
 
-    Logger.recordOutput("ShooterAlignStationary desiredTurretAngle", desiredTurretAngle);
-    Logger.recordOutput("ShooterAlignStationary desiredRPM", desiredRPM);
-    Logger.recordOutput("ShooterAlignStationary desiredHoodAngle", desiredHoodAngle);
+    Logger.recordOutput("ShooterAlignStationary/DesiredTurretAngle", desiredTurretAngle);
+    Logger.recordOutput("ShooterAlignStationary/DesiredRPM", desiredRPM);
+    Logger.recordOutput("ShooterAlignStationary/DesiredHoodAngle", desiredHoodAngle);
+    Logger.recordOutput("ShooterAlignStationary/Distance", distance);
 
-    Logger.recordOutput("Shooter Position", new Pose2d(shooterPosition, Rotation2d.kZero));
-    Logger.recordOutput("Target Hub", new Pose2d(targetHub, Rotation2d.kZero));
+    Logger.recordOutput(
+        "ShooterAlignStationary/ShooterPosition", new Pose2d(shooterPosition, Rotation2d.kZero));
+    Logger.recordOutput(
+        "ShooterAlignStationary/TargetHub", new Pose2d(targetHub, Rotation2d.kZero));
 
     turret.runGoal(desiredTurretAngle);
     shooterFlywheels.setRPM(desiredRPM);

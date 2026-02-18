@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Mode;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ShooterAlignStationary;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -266,7 +267,14 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .whileTrue(
-            new ShooterAlignStationary(drive::getPose, turret, shooterFlywheels, shooterHood));
+            new ShootOnTheMove(
+                drive,
+                turret,
+                shooterFlywheels,
+                shooterHood,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> -driverController.getRightX()));
 
     driverController
         .rightBumper()
@@ -301,6 +309,10 @@ public class RobotContainer {
     //                 shooterFlywheels.getRPMSetpoint()
     //                     + 10 * (-MathUtil.applyDeadband(operatorController.getLeftY(), 0.1))),
     //         shooterFlywheels));
+
+    if (Constants.currentMode == Mode.SIM) {
+      driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
+    }
   }
 
   private void configureFuelSim() {
@@ -349,6 +361,10 @@ public class RobotContainer {
 
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+
+    Logger.recordOutput(
+        "FieldSimulation/ChassisSpeedsFieldRelative",
+        driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative());
   }
 
   public void updateMechanismVisualization() {

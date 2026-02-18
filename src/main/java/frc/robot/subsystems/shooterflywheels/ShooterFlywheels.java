@@ -51,7 +51,7 @@ public class ShooterFlywheels extends SubsystemBase {
   /** Stops flywheel */
   public void stop() {
     rpmSetpoint = 0;
-    Logger.recordOutput("Shooter RPM Setpoint", 0);
+    Logger.recordOutput("Shooter RPM Setpoint", 0.0);
     state = ShooterFlywheelsState.STOPPED;
     io.setVoltage(0.0);
   }
