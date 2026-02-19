@@ -4,8 +4,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 
 public class ShooterFlywheelsConstants {
   // motor constants
-  public static final int leftMotorCanId = 0;
-  public static final int rightMotorCanId = 0;
+  public static final int leftMotorCanId = 31;
+  public static final int rightMotorCanId = 32;
   public static final boolean isInverted = false;
   public static final double motorReduction = 8.0 / 9.0;
   public static final int supplyCurrentLimit = 38;

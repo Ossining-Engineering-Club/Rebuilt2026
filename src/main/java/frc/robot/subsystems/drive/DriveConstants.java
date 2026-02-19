@@ -62,9 +62,9 @@ public final class DriveConstants {
   public static final double coupleRatio = 54.0 / 16.0;
 
   // Turn PID configuration
-  public static final double turnP = 10;
+  public static final double turnP = 1;
   public static final double turnI = 0;
-  public static final double turnD = 1;
+  public static final double turnD = 0;
   public static final double turnS = 0;
   public static final double turnV = 0;
   public static final double turnA = 0;
@@ -90,9 +90,9 @@ public final class DriveConstants {
   public static final boolean invertRightSide = false;
 
   // Front Left
-  public static final int frontLeftDriveMotorId = 2;
-  public static final int frontLeftSteerMotorId = 6;
-  public static final int frontLeftEncoderId = 10;
+  public static final int frontLeftDriveMotorId = 1;
+  public static final int frontLeftSteerMotorId = 5;
+  public static final int frontLeftEncoderId = 9;
   public static final Angle frontLeftEncoderOffset = Radians.of(0);
   public static final boolean frontLeftSteerMotorInverted = true;
   public static final boolean frontLeftEncoderInverted = false;
@@ -101,9 +101,9 @@ public final class DriveConstants {
   public static final Distance frontLeftYPos = Meters.of(moduleTranslations[0].getY());
 
   // Front Right
-  public static final int frontRightDriveMotorId = 3;
-  public static final int frontRightSteerMotorId = 7;
-  public static final int frontRightEncoderId = 11;
+  public static final int frontRightDriveMotorId = 2;
+  public static final int frontRightSteerMotorId = 6;
+  public static final int frontRightEncoderId = 10;
   public static final Angle frontRightEncoderOffset = Radians.of(0);
   public static final boolean frontRightSteerMotorInverted = true;
   public static final boolean frontRightEncoderInverted = false;
@@ -112,9 +112,9 @@ public final class DriveConstants {
   public static final Distance frontRightYPos = Meters.of(moduleTranslations[1].getY());
 
   // Back Left
-  public static final int backLeftDriveMotorId = 1;
-  public static final int backLeftSteerMotorId = 5;
-  public static final int backLeftEncoderId = 9;
+  public static final int backLeftDriveMotorId = 3;
+  public static final int backLeftSteerMotorId = 7;
+  public static final int backLeftEncoderId = 11;
   public static final Angle backLeftEncoderOffset = Radians.of(0);
   public static final boolean backLeftSteerMotorInverted = true;
   public static final boolean backLeftEncoderInverted = false;

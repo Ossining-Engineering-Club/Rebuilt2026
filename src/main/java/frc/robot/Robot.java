@@ -105,6 +105,7 @@ public class Robot extends LoggedRobot {
     if (Constants.currentMode == Constants.Mode.SIM) {
       robotContainer.resetSimState();
     }
+    robotContainer.stopEverything();
 
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -128,6 +129,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    robotContainer.stopEverything();
   }
 
   /** This function is called periodically during operator control. */
