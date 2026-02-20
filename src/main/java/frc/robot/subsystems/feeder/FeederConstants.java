@@ -3,7 +3,7 @@ package frc.robot.subsystems.feeder;
 // 0.0 and 0 is a placeholder
 public class FeederConstants {
   public static final double reverseVoltage = 0.0;
-  public static final double forwardVoltage = 12.0 * 0.7;
+  public static final double forwardVoltage = 12.0 * 0.9;
   public static final int feederCANID = 22;
   public static final boolean isInverted = true;
 
