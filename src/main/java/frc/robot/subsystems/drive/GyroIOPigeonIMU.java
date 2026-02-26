@@ -18,7 +18,7 @@ public class GyroIOPigeonIMU implements GyroIO {
     pigeon.setYaw(0);
 
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pigeon::getYaw);
+    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(() -> -pigeon.getYaw());
 
     pigeon.setStatusFramePeriod(
         PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR,
@@ -28,7 +28,7 @@ public class GyroIOPigeonIMU implements GyroIO {
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = pigeon.getState() == PigeonState.Ready;
-    inputs.yawPosition = Rotation2d.fromDegrees(pigeon.getYaw());
+    inputs.yawPosition = Rotation2d.fromDegrees(-pigeon.getYaw());
 
     double[] xyz_dps = new double[3];
     pigeon.getRawGyro(xyz_dps);

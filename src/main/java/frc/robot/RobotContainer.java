@@ -7,6 +7,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveCommands;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeonIMU;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOSim;
@@ -27,6 +36,11 @@ import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -40,8 +54,8 @@ import org.littletonrobotics.junction.Logger;
  */
 public class RobotContainer {
   // Subsystems
-  // private final Drive drive;
-  // private final Vision vision;
+  private final Drive drive;
+  private final Vision vision;
   private final IntakePivot intakePivot;
   // private final Turret turret;
   // private final ShooterHood shooterHood;
@@ -52,7 +66,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
-  // private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   // private final LoggedDashboardChooser<Command> autoChooser;
@@ -67,19 +81,19 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // vision =
-        //     new Vision(
-        //         new VisionIOReal(VisionConstants.limelightNames[0]),
-        //         new VisionIOReal(VisionConstants.limelightNames[1]));
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeonIMU(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight),
-        //         vision,
-        //         (robotPose) -> {});
+        vision =
+            new Vision(
+                new VisionIOReal(VisionConstants.limelightNames[0]),
+                new VisionIOReal(VisionConstants.limelightNames[1]));
+        drive =
+            new Drive(
+                new GyroIOPigeonIMU(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                vision,
+                (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // turret = new Turret(new TurretIOReal());
         // shooterHood = new ShooterHood(new ShooterHoodIOReal());
@@ -96,25 +110,25 @@ public class RobotContainer {
         // SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         // fuelSim = new FuelSim();
 
-        // vision =
-        //     new Vision(
-        //         new VisionIOSim(
-        //             VisionConstants.limelightNames[0],
-        //             VisionConstants.frontLLRobotToCamOffset,
-        //             driveSimulation::getSimulatedDriveTrainPose),
-        //         new VisionIOSim(
-        //             VisionConstants.limelightNames[1],
-        //             VisionConstants.leftLLRobotToCamOffset,
-        //             driveSimulation::getSimulatedDriveTrainPose));
-        // drive =
-        //     new Drive(
-        //         new GyroIOSim(driveSimulation.getGyroSimulation()),
-        //         new ModuleIOSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-        //         new ModuleIOSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-        //         new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-        //         new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
-        //         vision,
-        //         driveSimulation::setSimulationWorldPose);
+        vision =
+            new Vision(
+                new VisionIOSim(
+                    VisionConstants.limelightNames[0],
+                    VisionConstants.frontLLRobotToCamOffset,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOSim(
+                    VisionConstants.limelightNames[1],
+                    VisionConstants.leftLLRobotToCamOffset,
+                    driveSimulation::getSimulatedDriveTrainPose));
+        drive =
+            new Drive(
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                vision,
+                driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         // turret = new Turret(new TurretIOSim());
         // shooterHood = new ShooterHood(new ShooterHoodIOSim());
@@ -138,18 +152,17 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        // vision =
-        //     new Vision(new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO()
-        // {});
-        // drive =
-        //     new Drive(
-        //         new GyroIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {},
-        //         vision,
-        //         (robotPose) -> {});
+        vision =
+            new Vision(new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                vision,
+                (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         // turret = new Turret(new TurretIO() {});
         // shooterHood = new ShooterHood(new ShooterHoodIO() {});
@@ -191,12 +204,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -0.5 * driverController.getLeftY(),
-    //         () -> -0.5 * driverController.getLeftX(),
-    //         () -> -0.5 * driverController.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -0.5 * driverController.getLeftY(),
+            () -> -0.5 * driverController.getLeftX(),
+            () -> -0.5 * driverController.getRightX()));
 
     // Switch to X pattern when X button is pressed
     // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -331,7 +344,7 @@ public class RobotContainer {
         Commands.run(
             () ->
                 intakePivot.setVoltage(
-                    0.5 * 12.0 * MathUtil.applyDeadband(-driverController.getLeftY(), 0.1)),
+                    0.5 * 12.0 * MathUtil.applyDeadband(-operatorController.getLeftY(), 0.1)),
             intakePivot));
     driverController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
     driverController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
