@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 
 public class ShooterHoodConstants {
   // CAN ID
-  public static final int shooterHoodCANID = 0;
+  public static final int shooterHoodCANID = 33;
 
   // Motor Constants
   public static final int stallCurrentLimit = 38;

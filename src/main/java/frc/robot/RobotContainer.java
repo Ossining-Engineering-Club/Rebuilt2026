@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,6 +34,10 @@ import frc.robot.subsystems.shooterflywheels.ShooterFlywheels;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIO;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOReal;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOSim;
+import frc.robot.subsystems.shooterhood.ShooterHood;
+import frc.robot.subsystems.shooterhood.ShooterHoodIO;
+import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
+import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
@@ -58,7 +64,7 @@ public class RobotContainer {
   private final Vision vision;
   private final IntakePivot intakePivot;
   // private final Turret turret;
-  // private final ShooterHood shooterHood;
+  private final ShooterHood shooterHood;
   private final ShooterFlywheels shooterFlywheels;
   private final IntakeRollers intakeRollers;
   private final Spindexer spindexer;
@@ -96,7 +102,7 @@ public class RobotContainer {
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // turret = new Turret(new TurretIOReal());
-        // shooterHood = new ShooterHood(new ShooterHoodIOReal());
+        shooterHood = new ShooterHood(new ShooterHoodIOReal());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOReal());
         intakeRollers = new IntakeRollers(new IntakeRollersIOTalonFX());
         spindexer = new Spindexer(new SpindexerIOReal());
@@ -131,7 +137,7 @@ public class RobotContainer {
                 driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         // turret = new Turret(new TurretIOSim());
-        // shooterHood = new ShooterHood(new ShooterHoodIOSim());
+        shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOSim());
         intakeRollers = new IntakeRollers(new IntakeRollersIOSim());
         spindexer = new Spindexer(new SpindexerIOSim());
@@ -165,7 +171,7 @@ public class RobotContainer {
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
         // turret = new Turret(new TurretIO() {});
-        // shooterHood = new ShooterHood(new ShooterHoodIO() {});
+        shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIO() {});
         intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
@@ -215,15 +221,15 @@ public class RobotContainer {
     // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when A button is pressed
-    // driverController
-    //     .a()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-    //                 drive)
-    //             .ignoringDisable(true));
+    driverController
+        .a()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
 
     // driverController.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
     // driverController.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
@@ -298,7 +304,7 @@ public class RobotContainer {
     //   driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
     // }
 
-    driverController
+    operatorController
         .leftBumper()
         .onTrue(
             Commands.runOnce(
@@ -310,7 +316,7 @@ public class RobotContainer {
                 // shooterFlywheels,
                 feeder,
                 spindexer));
-    driverController
+    operatorController
         .leftBumper()
         .onFalse(
             Commands.runOnce(
@@ -323,7 +329,7 @@ public class RobotContainer {
                 feeder,
                 spindexer));
 
-    driverController
+    operatorController
         .rightBumper()
         .onTrue(
             Commands.runOnce(
@@ -331,7 +337,7 @@ public class RobotContainer {
                   shooterFlywheels.setVoltage(12 * 0.5);
                 },
                 shooterFlywheels));
-    driverController
+    operatorController
         .rightBumper()
         .onFalse(
             Commands.runOnce(
@@ -346,8 +352,14 @@ public class RobotContainer {
                 intakePivot.setVoltage(
                     0.5 * 12.0 * MathUtil.applyDeadband(-operatorController.getLeftY(), 0.1)),
             intakePivot));
-    driverController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
-    driverController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+    operatorController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
+    operatorController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+    shooterHood.setDefaultCommand(
+        Commands.run(
+            () ->
+                shooterHood.setVoltage(
+                    0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
+            shooterHood));
   }
 
   private void configureFuelSim() {
