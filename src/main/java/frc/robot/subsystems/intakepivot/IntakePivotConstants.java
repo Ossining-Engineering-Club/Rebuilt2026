@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 
 public class IntakePivotConstants {
   // CAN ID
-  public static final int canid = 0;
+  public static final int canid = 20;
 
   // Control System
   public static final double kP = 0.0;
@@ -34,6 +34,7 @@ public class IntakePivotConstants {
   // Motor Constants
   public static final int stallCurrentLimit = 38;
   public static final int freeCurrentLimit = 38;
+  public static final int supplyCurrentLimit = 38;
   public static final double motorReduction = 94.5 / 1.0;
   public static final boolean isInverted = false;
   public static final double encoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
@@ -42,7 +43,7 @@ public class IntakePivotConstants {
       1 / (2 * Math.PI / motorReduction); // Rotor Rotations -> Radians
 
   // Simulator settings
-  public static final DCMotor gearbox = DCMotor.getNEO(1);
+  public static final DCMotor gearbox = DCMotor.getFalcon500(1);
   public static final double pivotMOI = 0.1375532206;
   public static final double intakeLengthMeters = Units.inchesToMeters(12.5);
 }

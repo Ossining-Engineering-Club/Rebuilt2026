@@ -13,11 +13,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import org.littletonrobotics.junction.Logger;
 
-public class IntakePivotIOReal implements IntakePivotIO {
+public class IntakePivotIOSparkMax implements IntakePivotIO {
   private final SparkMax sparkMax;
   private final RelativeEncoder encoder;
 
-  public IntakePivotIOReal() {
+  public IntakePivotIOSparkMax() {
     sparkMax = new SparkMax(canid, MotorType.kBrushless);
     encoder = sparkMax.getEncoder();
 
