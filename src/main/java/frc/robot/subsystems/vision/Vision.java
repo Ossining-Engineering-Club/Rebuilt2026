@@ -101,9 +101,9 @@ public class Vision extends SubsystemBase {
   public Matrix<N3, N1> getEstimationStdDevs(
       Pose2d estimatedPose, int[] tagIds, double translationalDelta, boolean isRobotOverBump) {
     // if the robot is over a bump, fully trust vision
-    if (isRobotOverBump == true) {
-      return VecBuilder.fill(0, 0, 0);
-    }
+    // if (isRobotOverBump == true) {
+    //   return VecBuilder.fill(0.0, 0.0, 0.0);
+    // }
 
     var estStdDevs = VisionConstants.SINGLE_TAG_STD_DEVS;
     int numTags = 0;

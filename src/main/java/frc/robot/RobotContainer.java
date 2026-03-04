@@ -1,8 +1,12 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -10,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootOnTheMoveAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -42,6 +47,10 @@ import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -51,6 +60,7 @@ import frc.robot.util.FuelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -63,7 +73,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final IntakePivot intakePivot;
-  // private final Turret turret;
+  private final Turret turret;
   private final ShooterHood shooterHood;
   private final ShooterFlywheels shooterFlywheels;
   private final IntakeRollers intakeRollers;
@@ -75,7 +85,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
-  // private final LoggedDashboardChooser<Command> autoChooser;
+  private final LoggedDashboardChooser<Command> autoChooser;
 
   // Sim objects
   private SwerveDriveSimulation driveSimulation = null;
@@ -101,7 +111,7 @@ public class RobotContainer {
                 vision,
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        // turret = new Turret(new TurretIOReal());
+        turret = new Turret(new TurretIOReal());
         shooterHood = new ShooterHood(new ShooterHoodIOReal());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOReal());
         intakeRollers = new IntakeRollers(new IntakeRollersIOTalonFX());
@@ -111,10 +121,10 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        // driveSimulation =
-        //     new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        // SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-        // fuelSim = new FuelSim();
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        fuelSim = new FuelSim();
 
         vision =
             new Vision(
@@ -136,23 +146,23 @@ public class RobotContainer {
                 vision,
                 driveSimulation::setSimulationWorldPose);
         intakePivot = new IntakePivot(new IntakePivotIOSim());
-        // turret = new Turret(new TurretIOSim());
+        turret = new Turret(new TurretIOSim());
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOSim());
         intakeRollers = new IntakeRollers(new IntakeRollersIOSim());
         spindexer = new Spindexer(new SpindexerIOSim());
         feeder = new Feeder(new FeederIOSim());
 
-        // simulationManager =
-        //     new SimulationManager(
-        //         fuelSim,
-        //         shooterFlywheels,
-        //         shooterHood,
-        //         intakePivot,
-        //         intakeRollers,
-        //         spindexer,
-        //         turret,
-        //         feeder);
+        simulationManager =
+            new SimulationManager(
+                fuelSim,
+                shooterFlywheels,
+                shooterHood,
+                intakePivot,
+                intakeRollers,
+                spindexer,
+                turret,
+                feeder);
         configureFuelSim();
         break;
 
@@ -170,7 +180,7 @@ public class RobotContainer {
                 vision,
                 (robotPose) -> {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
-        // turret = new Turret(new TurretIO() {});
+        turret = new Turret(new TurretIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIO() {});
         intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
@@ -179,8 +189,11 @@ public class RobotContainer {
         break;
     }
 
+    // Configure the PathPlanner Named Commands
+    configureNamedCommands();
+
     // Set up auto routines
-    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     // autoChooser.addOption(
@@ -200,6 +213,33 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  private void configureNamedCommands() {
+    NamedCommands.registerCommand("Retract Intake", intakePivot.retract());
+    NamedCommands.registerCommand("Extend Intake", intakePivot.extend());
+    NamedCommands.registerCommand("Upright Intake", intakePivot.upright());
+    NamedCommands.registerCommand(
+        "Start Intake", Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
+    NamedCommands.registerCommand(
+        "Stop Intake", Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
+    NamedCommands.registerCommand(
+        "Aim On The Move", new ShootOnTheMoveAuto(drive, turret, shooterFlywheels, shooterHood));
+    NamedCommands.registerCommand(
+        "Start Shooting",
+        Commands.runOnce(
+            () -> {
+              feeder.startMotor();
+              spindexer.startMotor();
+            },
+            feeder,
+            spindexer));
+    NamedCommands.registerCommand(
+        "Stop Flywheels", Commands.runOnce(() -> shooterFlywheels.stop(), shooterFlywheels));
+    NamedCommands.registerCommand(
+        "Stop Feeder", Commands.runOnce(() -> feeder.stopMotor(), feeder));
+    NamedCommands.registerCommand(
+        "Stop Spindexer", Commands.runOnce(() -> spindexer.stopMotor(), spindexer));
   }
 
   /**
@@ -352,8 +392,12 @@ public class RobotContainer {
                 intakePivot.setVoltage(
                     0.5 * 12.0 * MathUtil.applyDeadband(-operatorController.getLeftY(), 0.1)),
             intakePivot));
-    operatorController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
-    operatorController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
+    operatorController
+        .leftTrigger(0.9)
+        .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
+    operatorController
+        .leftTrigger(0.9)
+        .onFalse(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
     shooterHood.setDefaultCommand(
         Commands.run(
             () ->
@@ -363,7 +407,7 @@ public class RobotContainer {
   }
 
   private void configureFuelSim() {
-    // fuelSim.spawnStartingFuel();
+    fuelSim.spawnStartingFuel();
 
     fuelSim.registerRobot(
         Units.inchesToMeters(3 + 30 + 3),
@@ -391,8 +435,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.get();
-    return Commands.runOnce(() -> {});
+    return autoChooser.get();
+    // return Commands.runOnce(() -> {});
   }
 
   public void resetSimState() {
@@ -406,6 +450,8 @@ public class RobotContainer {
     spindexer.stopMotor();
     intakePivot.stop();
     intakeRollers.stopMotor();
+    turret.stop();
+    shooterHood.stop();
   }
 
   public void updateSimulation() {
@@ -424,33 +470,32 @@ public class RobotContainer {
   }
 
   public void updateMechanismVisualization() {
-    // Logger.recordOutput(
-    //     "Component Poses",
-    //     new Pose3d[] {
-    //       new Pose3d(
-    //           0.130175,
-    //           0.2032,
-    //           0.4468150068,
-    //           new Rotation3d(0, 0, turret.getAngle())), // Shooter Base
-    //       new Pose3d(
-    //           0.130175 + 0.1118757224 * Math.cos(turret.getAngle()),
-    //           0.2032 + 0.1118757224 * Math.sin(turret.getAngle()),
-    //           0.5103150068,
-    //           new Rotation3d(
-    //               0,
-    //               (Math.PI / 2 - shooterHood.getAngle()) - Units.degreesToRadians(24),
-    //               turret.getAngle())), // Shooter Hood
-    //       new Pose3d(
-    //           -0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)), // Intake Pivot
-    //       new Pose3d(
-    //           Math.max(
-    //               -0.284582 * Math.cos(intakePivot.getAngle() -
-    // Units.degreesToRadians(1.5343415))
-    //                   + 0.2115,
-    //               0),
-    //           0,
-    //           0,
-    //           new Rotation3d()) // Hopper Extension
-    //     });
+    Logger.recordOutput(
+        "Component Poses",
+        new Pose3d[] {
+          new Pose3d(
+              0.130175,
+              0.2032,
+              0.4468150068,
+              new Rotation3d(0, 0, turret.getAngle())), // Shooter Base
+          new Pose3d(
+              0.130175 + 0.1118757224 * Math.cos(turret.getAngle()),
+              0.2032 + 0.1118757224 * Math.sin(turret.getAngle()),
+              0.5103150068,
+              new Rotation3d(
+                  0,
+                  (Math.PI / 2 - shooterHood.getAngle()) - Units.degreesToRadians(24),
+                  turret.getAngle())), // Shooter Hood
+          new Pose3d(
+              -0.254, 0, 0.2286, new Rotation3d(0, intakePivot.getAngle(), 0)), // Intake Pivot
+          new Pose3d(
+              Math.max(
+                  -0.284582 * Math.cos(intakePivot.getAngle() - Units.degreesToRadians(1.5343415))
+                      + 0.2115,
+                  0),
+              0,
+              0,
+              new Rotation3d()) // Hopper Extension
+        });
   }
 }
