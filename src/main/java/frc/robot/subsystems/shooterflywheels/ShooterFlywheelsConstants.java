@@ -11,11 +11,11 @@ public class ShooterFlywheelsConstants {
   public static final int supplyCurrentLimit = 38;
 
   // control system
-  public static final double kP = 0.0;
+  public static final double kP = 0.2;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
-  public static final double kS = 0.0;
-  public static final double kV = 0.0;
+  public static final double kS = 0.28;
+  public static final double kV = 0.108;
   public static final double simP = 0.003;
   public static final double simI = 0.0;
   public static final double simD = 0.0;

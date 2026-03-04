@@ -1,8 +1,5 @@
 package frc.robot.subsystems.shooterhood;
 
-import static frc.robot.subsystems.intakepivot.IntakePivotConstants.freeCurrentLimit;
-import static frc.robot.subsystems.intakepivot.IntakePivotConstants.motorReduction;
-import static frc.robot.subsystems.intakepivot.IntakePivotConstants.stallCurrentLimit;
 import static frc.robot.subsystems.shooterhood.ShooterHoodConstants.*;
 import static frc.robot.util.SparkUtil.tryUntilOk;
 

@@ -57,7 +57,7 @@ public class ShooterFlywheelsIOReal implements ShooterFlywheelsIO {
 
   @Override
   public void updateInputs(ShooterFlywheelsIOInputs inputs) {
-    inputs.RPM = leftMotor.getVelocity().getValueAsDouble();
+    inputs.RPM = leftMotor.getVelocity().getValueAsDouble() * 60.0;
 
     inputs.leftAppliedVolts = leftMotor.getMotorVoltage().getValueAsDouble();
     inputs.leftStatorCurrent = leftMotor.getStatorCurrent().getValueAsDouble();

@@ -8,11 +8,11 @@ public class IntakePivotConstants {
   public static final int canid = 20;
 
   // Control System
-  public static final double kP = 0.0;
+  public static final double kP = 20.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
-  public static final double maxVelocity = Units.degreesToRadians(0);
-  public static final double maxAcceleration = Units.degreesToRadians(0);
+  public static final double maxVelocity = Units.degreesToRadians(360);
+  public static final double maxAcceleration = Units.degreesToRadians(720);
   public static final double simP = 20.0;
   public static final double simI = 0.0;
   public static final double simD = 0.0;

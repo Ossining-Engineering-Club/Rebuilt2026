@@ -374,7 +374,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheels.setVoltage(12 * 0.5);
+                  shooterFlywheels.setVoltage(0.28);
                 },
                 shooterFlywheels));
     operatorController
@@ -398,12 +398,50 @@ public class RobotContainer {
     operatorController
         .leftTrigger(0.9)
         .onFalse(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
+
+    // operatorController.x().onTrue(intakePivot.extend());
+    // operatorController.y().onTrue(intakePivot.upright());
+    // operatorController.a().onTrue(intakePivot.retract());
+
+    // operatorController
+    //     .a()
+    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(500), shooterFlywheels));
+    // operatorController
+    //     .x()
+    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000), shooterFlywheels));
+    // operatorController
+    //     .y()
+    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1500), shooterFlywheels));
+
+    operatorController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                () -> stopEverything(),
+                shooterFlywheels,
+                feeder,
+                spindexer,
+                intakePivot,
+                intakeRollers,
+                turret,
+                shooterHood));
     shooterHood.setDefaultCommand(
         Commands.run(
             () ->
                 shooterHood.setVoltage(
                     0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
             shooterHood));
+
+    operatorController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
+    operatorController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(50)));
+    operatorController.a().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+
+    // turret.setDefaultCommand(
+    //     Commands.run(
+    //         () ->
+    //             turret.setVoltage(
+    //                 0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightX(), 0.1)),
+    //         turret));
   }
 
   private void configureFuelSim() {
