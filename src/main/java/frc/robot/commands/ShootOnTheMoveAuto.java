@@ -30,6 +30,7 @@ public class ShootOnTheMoveAuto extends Command {
   private double distanceIncreaseScalar;
   private int maxTOFRecursions;
   private double TOFRecursionTolerance;
+  private Translation2d targetHub;
 
   public ShootOnTheMoveAuto(
       Drive drive, Turret turret, ShooterFlywheels shooterFlywheels, ShooterHood shooterHood) {
@@ -43,6 +44,12 @@ public class ShootOnTheMoveAuto extends Command {
 
   @Override
   public void initialize() {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      targetHub = FieldConstants.blueHub;
+    } else {
+      targetHub = FieldConstants.redHub;
+    }
+
     if (Constants.currentMode == Constants.Mode.SIM) {
       shooterRPMMap = ShooterAlignConstants.SimAuto.shooterRPMMap;
       shooterHoodMap = ShooterAlignConstants.Sim.shooterHoodMap;
@@ -66,13 +73,6 @@ public class ShootOnTheMoveAuto extends Command {
 
   @Override
   public void execute() {
-    Translation2d targetHub;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      targetHub = FieldConstants.blueHub;
-    } else {
-      targetHub = FieldConstants.redHub;
-    }
-
     Translation2d shooterPosition =
         drive
             .getPose()

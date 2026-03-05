@@ -21,6 +21,7 @@ public class ShooterAlignStationary extends Command {
   private final Turret turret;
   private final ShooterFlywheels shooterFlywheels;
   private final ShooterHood shooterHood;
+  private Translation2d targetHub;
 
   public ShooterAlignStationary(
       Supplier<Pose2d> robotPoseSupplier,
@@ -36,14 +37,16 @@ public class ShooterAlignStationary extends Command {
   }
 
   @Override
-  public void execute() {
-    Translation2d targetHub;
+  public void initialize() {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       targetHub = FieldConstants.blueHub;
     } else {
       targetHub = FieldConstants.redHub;
     }
+  }
 
+  @Override
+  public void execute() {
     Translation2d shooterPosition =
         robotPoseSupplier
             .get()

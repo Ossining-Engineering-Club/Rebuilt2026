@@ -374,7 +374,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheels.setVoltage(0.28);
+                  shooterFlywheels.setVoltage(0.4 * 12);
                 },
                 shooterFlywheels));
     operatorController
@@ -432,9 +432,9 @@ public class RobotContainer {
                     0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
             shooterHood));
 
-    operatorController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
-    operatorController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(50)));
-    operatorController.a().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+    // operatorController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
+    // operatorController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(50)));
+    // operatorController.a().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
 
     // turret.setDefaultCommand(
     //     Commands.run(

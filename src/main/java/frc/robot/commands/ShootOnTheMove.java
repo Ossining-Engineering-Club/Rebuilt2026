@@ -43,6 +43,7 @@ public class ShootOnTheMove extends Command {
   private double driveRotA;
   private final ProfiledPIDController mainDriveRotPID;
   private final PIDController secondaryDriveRotPID;
+  private Translation2d targetHub;
 
   private double prevSetpointVelocity = 0;
 
@@ -133,6 +134,12 @@ public class ShootOnTheMove extends Command {
 
   @Override
   public void initialize() {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      targetHub = FieldConstants.blueHub;
+    } else {
+      targetHub = FieldConstants.redHub;
+    }
+
     if (Constants.currentMode == Constants.Mode.SIM) {
       shooterRPMMap = ShooterAlignConstants.Sim.shooterRPMMap;
       shooterHoodMap = ShooterAlignConstants.Sim.shooterHoodMap;
@@ -163,13 +170,6 @@ public class ShootOnTheMove extends Command {
 
   @Override
   public void execute() {
-    Translation2d targetHub;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      targetHub = FieldConstants.blueHub;
-    } else {
-      targetHub = FieldConstants.redHub;
-    }
-
     Translation2d shooterPosition =
         drive
             .getPose()

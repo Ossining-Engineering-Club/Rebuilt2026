@@ -14,12 +14,12 @@ public class ShooterAlignConstants {
     public static final int maxTOFRecursions = 30;
     public static final double TOFRecursionTolerance =
         0.02; // unit of proportion error (range of [0,1])
-    public static final double driveRotP = 0;
+    public static final double driveRotP = 2;
     public static final double driveRotI = 0;
     public static final double driveRotD = 0;
     public static final double driveRotA = 0;
-    public static final double driveRotMaxAngularVelocity = Units.degreesToRadians(0);
-    public static final double driveRotMaxAngularAcceleration = Units.degreesToRadians(0);
+    public static final double driveRotMaxAngularVelocity = Units.degreesToRadians(720);
+    public static final double driveRotMaxAngularAcceleration = Units.degreesToRadians(360);
     public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
     public static final InterpolatingDoubleTreeMap shooterHoodMap =
         new InterpolatingDoubleTreeMap();
