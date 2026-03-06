@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -48,10 +50,10 @@ public class ShooterAlignStationary extends Command {
   @Override
   public void execute() {
     Translation2d shooterPosition =
-        robotPoseSupplier
-            .get()
-            .plus(new Transform2d(Constants.shooterOffset.toTranslation2d(), Rotation2d.kZero))
-            .getTranslation();
+        new Pose3d(robotPoseSupplier.get())
+            .plus(new Transform3d(Constants.shooterOffset, Rotation3d.kZero))
+            .getTranslation()
+            .toTranslation2d();
 
     double desiredTurretAngle =
         targetHub.minus(shooterPosition).getAngle().getRadians()

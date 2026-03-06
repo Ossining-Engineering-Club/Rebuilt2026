@@ -9,8 +9,8 @@ public class ShooterAlignConstants {
     public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
-        0.1; // distance is multiplied by (1 + distanceIncreaseScalar *
-    // shooterRadialVelocityRelativeToHub)
+        0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
+    // shooterTangentialVelocityRelativeToHub)
     public static final int maxTOFRecursions = 30;
     public static final double TOFRecursionTolerance =
         0.02; // unit of proportion error (range of [0,1])
@@ -43,13 +43,11 @@ public class ShooterAlignConstants {
     public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
-        0.1; // distance is multiplied by (1 + distanceIncreaseScalar *
-    // shooterRadialVelocityRelativeToHub)
+        0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
+    // shooterTangentialVelocityRelativeToHub)
     public static final int maxTOFRecursions = 30;
     public static final double TOFRecursionTolerance =
         0.02; // unit of proportion error (range of [0,1])
-    public static final double driveRotMaxAngularVelocity = Units.degreesToRadians(0);
-    public static final double driveRotMaxAngularAcceleration = Units.degreesToRadians(0);
     public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
     public static final InterpolatingDoubleTreeMap shooterHoodMap =
         new InterpolatingDoubleTreeMap();
@@ -71,17 +69,17 @@ public class ShooterAlignConstants {
   public static class Sim {
     public static final double minDist = 2;
     public static final double latencyCompensationSeconds = 0.0;
-    public static final double chassisSpeedsMultiplier = 0.6;
+    public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
-        0.1; // distance is multiplied by (1 + distanceIncreaseScalar *
-    // shooterRadialVelocityRelativeToHub)
+        0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
+    // shooterTangentialVelocityRelativeToHub)
     public static final int maxTOFRecursions = 30;
     public static final double TOFRecursionTolerance =
         0.02; // unit of proportion error (range of [0,1])
-    public static final double driveRotP = 8;
+    public static final double driveRotP = 6;
     public static final double driveRotI = 0;
-    public static final double driveRotD = 0;
-    public static final double driveRotA = 0.12;
+    public static final double driveRotD = 0.4;
+    public static final double driveRotA = 0;
     public static final double driveRotMaxAngularVelocity = Units.degreesToRadians(720);
     public static final double driveRotMaxAngularAcceleration = Units.degreesToRadians(360);
     public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
@@ -130,15 +128,13 @@ public class ShooterAlignConstants {
   public static class SimAuto {
     public static final double minDist = 2;
     public static final double latencyCompensationSeconds = 0.0;
-    public static final double chassisSpeedsMultiplier = 0.6;
+    public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
-        0.1; // distance is multiplied by (1 + distanceIncreaseScalar *
-    // shooterRadialVelocityRelativeToHub)
+        0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
+    // shooterTangentialVelocityRelativeToHub)
     public static final int maxTOFRecursions = 30;
     public static final double TOFRecursionTolerance =
         0.02; // unit of proportion error (range of [0,1])
-    public static final double driveRotMaxAngularVelocity = Units.degreesToRadians(720);
-    public static final double driveRotMaxAngularAcceleration = Units.degreesToRadians(360);
     public static final InterpolatingDoubleTreeMap shooterRPMMap = new InterpolatingDoubleTreeMap();
     public static final InterpolatingDoubleTreeMap shooterHoodMap =
         new InterpolatingDoubleTreeMap();

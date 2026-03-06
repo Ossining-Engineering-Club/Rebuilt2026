@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,32 +54,32 @@ public class ShootOnTheMoveAuto extends Command {
 
     if (Constants.currentMode == Constants.Mode.SIM) {
       shooterRPMMap = ShooterAlignConstants.SimAuto.shooterRPMMap;
-      shooterHoodMap = ShooterAlignConstants.Sim.shooterHoodMap;
-      TOFMap = ShooterAlignConstants.Sim.TOFMap;
-      latencyCompensationSeconds = ShooterAlignConstants.Sim.latencyCompensationSeconds;
-      chassisSpeedsMultiplier = ShooterAlignConstants.Sim.chassisSpeedsMultiplier;
-      distanceIncreaseScalar = ShooterAlignConstants.Sim.distanceIncreaseScalar;
-      maxTOFRecursions = ShooterAlignConstants.Sim.maxTOFRecursions;
-      TOFRecursionTolerance = ShooterAlignConstants.Sim.TOFRecursionTolerance;
+      shooterHoodMap = ShooterAlignConstants.SimAuto.shooterHoodMap;
+      TOFMap = ShooterAlignConstants.SimAuto.TOFMap;
+      latencyCompensationSeconds = ShooterAlignConstants.SimAuto.latencyCompensationSeconds;
+      chassisSpeedsMultiplier = ShooterAlignConstants.SimAuto.chassisSpeedsMultiplier;
+      distanceIncreaseScalar = ShooterAlignConstants.SimAuto.distanceIncreaseScalar;
+      maxTOFRecursions = ShooterAlignConstants.SimAuto.maxTOFRecursions;
+      TOFRecursionTolerance = ShooterAlignConstants.SimAuto.TOFRecursionTolerance;
     } else {
-      shooterRPMMap = ShooterAlignConstants.Real.shooterRPMMap;
-      shooterHoodMap = ShooterAlignConstants.Real.shooterHoodMap;
-      TOFMap = ShooterAlignConstants.Real.TOFMap;
-      latencyCompensationSeconds = ShooterAlignConstants.Real.latencyCompensationSeconds;
-      chassisSpeedsMultiplier = ShooterAlignConstants.Real.chassisSpeedsMultiplier;
-      distanceIncreaseScalar = ShooterAlignConstants.Real.distanceIncreaseScalar;
-      maxTOFRecursions = ShooterAlignConstants.Real.maxTOFRecursions;
-      TOFRecursionTolerance = ShooterAlignConstants.Real.TOFRecursionTolerance;
+      shooterRPMMap = ShooterAlignConstants.RealAuto.shooterRPMMap;
+      shooterHoodMap = ShooterAlignConstants.RealAuto.shooterHoodMap;
+      TOFMap = ShooterAlignConstants.RealAuto.TOFMap;
+      latencyCompensationSeconds = ShooterAlignConstants.RealAuto.latencyCompensationSeconds;
+      chassisSpeedsMultiplier = ShooterAlignConstants.RealAuto.chassisSpeedsMultiplier;
+      distanceIncreaseScalar = ShooterAlignConstants.RealAuto.distanceIncreaseScalar;
+      maxTOFRecursions = ShooterAlignConstants.RealAuto.maxTOFRecursions;
+      TOFRecursionTolerance = ShooterAlignConstants.RealAuto.TOFRecursionTolerance;
     }
   }
 
   @Override
   public void execute() {
     Translation2d shooterPosition =
-        drive
-            .getPose()
-            .plus(new Transform2d(Constants.shooterOffset.toTranslation2d(), Rotation2d.kZero))
-            .getTranslation();
+        new Pose3d(drive.getPose())
+            .plus(new Transform3d(Constants.shooterOffset, Rotation3d.kZero))
+            .getTranslation()
+            .toTranslation2d();
 
     Translation2d modifiedHub = calculateModifiedHub(targetHub, shooterPosition);
 
@@ -87,7 +89,7 @@ public class ShootOnTheMoveAuto extends Command {
 
     double distance = modifiedHub.minus(shooterPosition).getNorm();
 
-    // calculating magnitude of the radial velocity of the shooter relative to the hub
+    // calculating magnitude of the tangential velocity of the shooter relative to the hub
     double angleFromShooterToHub = modifiedHub.minus(shooterPosition).getAngle().getRadians();
     double shooterTangentialVelocityRelativeToHub =
         Math.abs(
@@ -146,14 +148,16 @@ public class ShootOnTheMoveAuto extends Command {
                     * chassisSpeedsMultiplier
                     * (TOF + latencyCompensationSeconds)));
 
-    double newTOF = 0;
-    Translation2d newModifiedHub = new Translation2d();
+    Logger.recordOutput(
+        "ShooterAlignOnTheMove/OriginalModifiedHub", new Pose2d(modifiedHub, Rotation2d.kZero));
+
+    int numRecursions = 0;
 
     for (int i = 0; i < maxTOFRecursions; i++) {
       double newDistance = modifiedHub.minus(shooterPosition).getNorm();
-      newTOF = TOFMap.get(newDistance);
-      newModifiedHub =
-          modifiedHub.minus(
+      double newTOF = TOFMap.get(newDistance);
+      modifiedHub =
+          targetHub.minus(
               new Translation2d(
                   drive.getFieldRelativeChassisSpeeds().vxMetersPerSecond
                       * chassisSpeedsMultiplier
@@ -161,9 +165,15 @@ public class ShootOnTheMoveAuto extends Command {
                   drive.getFieldRelativeChassisSpeeds().vyMetersPerSecond
                       * chassisSpeedsMultiplier
                       * (newTOF + latencyCompensationSeconds)));
-      if (Math.abs(newTOF - TOF) / TOF <= TOFRecursionTolerance) break;
+      numRecursions++;
+      if (Math.abs(newTOF - TOF) / TOF <= TOFRecursionTolerance) {
+        TOF = newTOF;
+        break;
+      }
+      TOF = newTOF;
     }
-    Logger.recordOutput("ShooterAlignOnTheMove/EstimatedTOF", newTOF);
-    return newModifiedHub;
+    Logger.recordOutput("ShooterAlignOnTheMove/EstimatedTOF", TOF);
+    Logger.recordOutput("ShooterAlignOnTheMove/TOFRecursions", numRecursions);
+    return modifiedHub;
   }
 }

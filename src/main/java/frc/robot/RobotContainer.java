@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.ShootOnTheMoveAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -332,14 +333,6 @@ public class RobotContainer {
     // driverController.y().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-1)));
     // driverController.y().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
 
-    // shooterFlywheels.setDefaultCommand(
-    //     Commands.runOnce(
-    //         () ->
-    //             shooterFlywheels.setRPM(
-    //                 shooterFlywheels.getRPMSetpoint()
-    //                     + 10 * (-MathUtil.applyDeadband(operatorController.getLeftY(), 0.1))),
-    //         shooterFlywheels));
-
     // if (Constants.currentMode == Mode.SIM) {
     //   driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
     // }
@@ -369,22 +362,42 @@ public class RobotContainer {
                 feeder,
                 spindexer));
 
+    // operatorController
+    //     .rightBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               shooterFlywheels.setVoltage(0.4 * 12);
+    //             },
+    //             shooterFlywheels));
+    // operatorController
+    //     .rightBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               shooterFlywheels.stop();
+    //             },
+    //             shooterFlywheels));
+
+    shooterFlywheels.setDefaultCommand(
+        Commands.runOnce(
+            () ->
+                shooterFlywheels.setRPM(
+                    shooterFlywheels.getRPMSetpoint()
+                        + 10 * (-MathUtil.applyDeadband(operatorController.getRightY(), 0.1))),
+            shooterFlywheels));
+
     operatorController
         .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  shooterFlywheels.setVoltage(0.4 * 12);
-                },
-                shooterFlywheels));
-    operatorController
-        .rightBumper()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  shooterFlywheels.stop();
-                },
-                shooterFlywheels));
+        .whileTrue(
+            new ShootOnTheMove(
+                drive,
+                turret,
+                shooterFlywheels,
+                shooterHood,
+                () -> -0.5 * driverController.getLeftY(),
+                () -> -0.5 * driverController.getLeftX(),
+                () -> -0.5 * driverController.getRightX()));
 
     intakePivot.setDefaultCommand(
         Commands.run(
@@ -425,12 +438,25 @@ public class RobotContainer {
                 intakeRollers,
                 turret,
                 shooterHood));
-    shooterHood.setDefaultCommand(
-        Commands.run(
-            () ->
-                shooterHood.setVoltage(
-                    0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
-            shooterHood));
+    // shooterHood.setDefaultCommand(
+    //     Commands.run(
+    //         () ->
+    //             shooterHood.setVoltage(
+    //                 0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
+    //         shooterHood));
+
+    operatorController
+        .povUp()
+        .onTrue(Commands.runOnce(() -> shooterHood.setVoltage(0.1 * 12.0), shooterHood));
+    operatorController
+        .povUp()
+        .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
+    operatorController
+        .povDown()
+        .onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-0.1 * 12.0), shooterHood));
+    operatorController
+        .povDown()
+        .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
 
     // operatorController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
     // operatorController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(50)));
