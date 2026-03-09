@@ -9,11 +9,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.MaintainIntakePivotAngle;
 import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.ShootOnTheMoveAuto;
 import frc.robot.generated.TunerConstants;
@@ -25,10 +28,12 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederConstants;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
 import frc.robot.subsystems.intakepivot.IntakePivot;
+import frc.robot.subsystems.intakepivot.IntakePivotConstants;
 import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
 import frc.robot.subsystems.intakepivot.IntakePivotIOTalonFX;
@@ -84,6 +89,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final CommandXboxController manualController = new CommandXboxController(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -250,6 +256,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Driver Controller
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -272,120 +279,32 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // driverController.x().onTrue(intakePivot.goToAngle(IntakePivotConstants.extendedAngle));
-    // driverController.y().onTrue(intakePivot.goToAngle(IntakePivotConstants.retractedAngle));
-    // driverController.b().whileTrue(new IntakeAgitate(intakePivot));
-
-    // driverController.x().onTrue(turret.goToAngle(Units.degreesToRadians(150)));
-    // driverController.y().onTrue(turret.goToAngle(Units.degreesToRadians(-30)));
-    // driverController.b().whileTrue(turret.trackAngle(() -> -drive.getRotation().getRadians()));
-
-    // driverController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
-    // driverController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
-    // driverController.b().whileTrue(shooterHood.trackAngle(() ->
-    // drive.getRotation().getRadians()));
-
-    // driverController.x().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000)));
-    // driverController.y().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(3000)));
-    // driverController.b().onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(5000)));
-
-    // driverController.a().onTrue(intakePivot.retract());
-    // driverController.b().toggleOnTrue(intakePivot.extend());
-
-    // driverController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> intakeRollers.startMotor()));
-    // driverController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> intakeRollers.stopMotor()));
-
-    // driverController
-    //     .leftBumper()
-    //     .whileTrue(
-    //         new ShootOnTheMove(
-    //             drive,
-    //             turret,
-    //             shooterFlywheels,
-    //             shooterHood,
-    //             () -> -driverController.getLeftY(),
-    //             () -> -driverController.getLeftX(),
-    //             () -> -driverController.getRightX()));
-
-    // driverController
-    //     .rightBumper()
-    //     .whileTrue(
-    //         // Commands.runOnce(() -> shooterFlywheels.setRPM(2112))
-    //         //     .andThen(Commands.waitSeconds(0.5))
-    //         //     .andThen(
-    //         Commands.runOnce(
-    //             () -> {
-    //               spindexer.startMotor();
-    //               feeder.startMotor();
-    //             }));
-    // driverController
-    //     .rightBumper()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               // shooterFlywheels.setRPM(0);
-    //               spindexer.stopMotor();
-    //               feeder.stopMotor();
-    //             }));
-
-    // driverController.x().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(1)));
-    // driverController.x().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
-    // driverController.y().onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-1)));
-    // driverController.y().onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0)));
-
     // if (Constants.currentMode == Mode.SIM) {
     //   driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
     // }
 
+    // Operator Controller
     operatorController
         .leftBumper()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  // shooterFlywheels.setVoltage(12 * 0.3);
                   feeder.startMotor();
                   spindexer.startMotor();
                 },
-                // shooterFlywheels,
                 feeder,
                 spindexer));
+
     operatorController
         .leftBumper()
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  // shooterFlywheels.stop();
                   feeder.stopMotor();
                   spindexer.stopMotor();
                 },
-                // shooterFlywheels,
                 feeder,
                 spindexer));
-
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterFlywheels.setVoltage(0.4 * 12);
-    //             },
-    //             shooterFlywheels));
-    // operatorController
-    //     .rightBumper()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterFlywheels.stop();
-    //             },
-    //             shooterFlywheels));
-
-    shooterFlywheels.setDefaultCommand(
-        Commands.runOnce(
-            () ->
-                shooterFlywheels.setRPM(
-                    shooterFlywheels.getRPMSetpoint()
-                        + 10 * (-MathUtil.applyDeadband(operatorController.getRightY(), 0.1))),
-            shooterFlywheels));
 
     operatorController
         .rightBumper()
@@ -399,32 +318,40 @@ public class RobotContainer {
                 () -> -0.5 * driverController.getLeftX(),
                 () -> -0.5 * driverController.getRightX()));
 
-    intakePivot.setDefaultCommand(
-        Commands.run(
-            () ->
-                intakePivot.setVoltage(
-                    0.5 * 12.0 * MathUtil.applyDeadband(-operatorController.getLeftY(), 0.1)),
-            intakePivot));
     operatorController
         .leftTrigger(0.9)
+        .whileTrue(new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
+
+    operatorController
+        .rightTrigger(0.9)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  feeder.reverseMotor();
+                  spindexer.reverseMotor();
+                },
+                feeder,
+                spindexer));
+
+    operatorController
+        .rightTrigger(0.9)
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  feeder.stopMotor();
+                  spindexer.stopMotor();
+                },
+                feeder,
+                spindexer));
+
+    operatorController
+        .x()
         .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
-    operatorController
-        .leftTrigger(0.9)
-        .onFalse(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
+    operatorController.y().onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
 
-    // operatorController.x().onTrue(intakePivot.extend());
-    // operatorController.y().onTrue(intakePivot.upright());
-    // operatorController.a().onTrue(intakePivot.retract());
-
-    // operatorController
-    //     .a()
-    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(500), shooterFlywheels));
-    // operatorController
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1000), shooterFlywheels));
-    // operatorController
-    //     .y()
-    //     .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(1500), shooterFlywheels));
+    operatorController.povUp().onTrue(intakePivot.extend());
+    operatorController.povRight().onTrue(intakePivot.upright());
+    operatorController.povDown().onTrue(intakePivot.retract());
 
     operatorController
         .b()
@@ -438,36 +365,164 @@ public class RobotContainer {
                 intakeRollers,
                 turret,
                 shooterHood));
-    // shooterHood.setDefaultCommand(
-    //     Commands.run(
-    //         () ->
-    //             shooterHood.setVoltage(
-    //                 0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightY(), 0.1)),
-    //         shooterHood));
 
-    operatorController
+    // shooterFlywheels.setDefaultCommand(
+    //     Commands.runOnce(
+    //         () ->
+    //             shooterFlywheels.setRPM(
+    //                 shooterFlywheels.getRPMSetpoint()
+    //                     + 10 * (-MathUtil.applyDeadband(operatorController.getRightY(), 0.1))),
+    //         shooterFlywheels));
+
+    // Manual Controller
+    // Feeder manual control
+    manualController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  feeder.startMotor();
+                },
+                feeder));
+    manualController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  feeder.stopMotor();
+                },
+                feeder));
+
+    manualController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  feeder.reverseMotor();
+                },
+                feeder));
+    manualController
+        .rightBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  feeder.stopMotor();
+                },
+                feeder));
+
+    // Spindexer manual control
+    manualController
+        .leftTrigger(0.9)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  spindexer.startMotor();
+                },
+                spindexer));
+    manualController
+        .leftTrigger(0.9)
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  spindexer.stopMotor();
+                },
+                spindexer));
+
+    manualController
+        .rightTrigger(0.9)
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  spindexer.reverseMotor();
+                },
+                spindexer));
+    manualController
+        .rightTrigger(0.9)
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  spindexer.stopMotor();
+                },
+                spindexer));
+
+    // Intake Rollers manual control
+    manualController
+        .x()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeRollers.startMotor();
+                },
+                intakeRollers));
+    manualController
+        .x()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakeRollers.stopMotor();
+                },
+                intakeRollers));
+
+    manualController
+        .y()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeRollers.reverseMotor();
+                },
+                intakeRollers));
+    manualController
+        .y()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakeRollers.stopMotor();
+                },
+                intakeRollers));
+
+    // Flywheels manual control
+    manualController
+        .a()
+        .onTrue(Commands.runOnce(() -> shooterFlywheels.setRPM(2000), shooterFlywheels));
+    manualController.a().onFalse(Commands.runOnce(() -> shooterFlywheels.stop(), shooterFlywheels));
+
+    // Shooter Hood manual control
+    manualController
         .povUp()
-        .onTrue(Commands.runOnce(() -> shooterHood.setVoltage(0.1 * 12.0), shooterHood));
-    operatorController
-        .povUp()
-        .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
-    operatorController
-        .povDown()
         .onTrue(Commands.runOnce(() -> shooterHood.setVoltage(-0.1 * 12.0), shooterHood));
-    operatorController
+    manualController
+        .povUp()
+        .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
+    manualController
+        .povDown()
+        .onTrue(Commands.runOnce(() -> shooterHood.setVoltage(0.1 * 12.0), shooterHood));
+    manualController
         .povDown()
         .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
 
-    // operatorController.y().onTrue(shooterHood.goToAngle(Units.degreesToRadians(40)));
-    // operatorController.x().onTrue(shooterHood.goToAngle(Units.degreesToRadians(50)));
-    // operatorController.a().onTrue(shooterHood.goToAngle(Units.degreesToRadians(66)));
+    intakePivot.setDefaultCommand(
+        Commands.run(
+            () ->
+                intakePivot.setVoltage(
+                    0.5 * 12.0 * MathUtil.applyDeadband(-manualController.getLeftY(), 0.1)),
+            intakePivot));
 
-    // turret.setDefaultCommand(
-    //     Commands.run(
-    //         () ->
-    //             turret.setVoltage(
-    //                 0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightX(), 0.1)),
-    //         turret));
+    turret.setDefaultCommand(
+        Commands.run(
+            () ->
+                turret.setVoltage(
+                    0.25 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
+            turret));
+
+    // Feeder auto unjam
+    Logger.recordOutput("Time of Last Feeder Jam", -1);
+    new Trigger(() -> feeder.getStatorCurrent() >= FeederConstants.jamStatorCurrentThreshold)
+        .onTrue(
+            Commands.runOnce(
+                    () -> Logger.recordOutput("Time of Last Feeder Jam", Timer.getFPGATimestamp()))
+                .andThen(Commands.runOnce(() -> feeder.reverseMotor(), feeder))
+                .andThen(Commands.waitSeconds(1.0))
+                .andThen(Commands.runOnce(() -> feeder.stopMotor(), feeder)));
   }
 
   private void configureFuelSim() {

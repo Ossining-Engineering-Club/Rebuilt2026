@@ -12,4 +12,7 @@ public class FeederConstants {
 
   // current limit for TalonFX
   public static final int feederMotorSupplyCurrentLimit = 38;
+
+  // current threshold for jam
+  public static final double jamStatorCurrentThreshold = 80;
 }

@@ -19,6 +19,7 @@ public class IntakePivotConstants {
   public static final double simMaxVelocity = Units.degreesToRadians(360);
   public static final double simMaxAcceleration = Units.degreesToRadians(720);
   public static final double pidTolerance = Units.degreesToRadians(0.5);
+  public static final double maintainAngleTolerance = Units.degreesToRadians(2.0);
 
   // Angle Setpoints
   public static final double maxAngle = Units.degreesToRadians(108.0);
