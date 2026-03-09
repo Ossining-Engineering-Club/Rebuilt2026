@@ -561,6 +561,10 @@ public class RobotContainer {
   public void resetSimState() {
     fuelSim.clearFuel();
     fuelSim.spawnStartingFuel();
+    intakePivot.resetSimState();
+    shooterHood.resetSimState();
+    turret.resetSimState();
+    simulationManager.resetFuelForAuto();
   }
 
   public void stopEverything() {

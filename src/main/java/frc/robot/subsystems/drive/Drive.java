@@ -329,6 +329,9 @@ public class Drive extends SubsystemBase {
   public void setPose(Pose2d pose) {
     resetSimulationPoseCallBack.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      vision.resetSimState(pose);
+    }
   }
 
   /** Updates pose estimator with vision measurements. */

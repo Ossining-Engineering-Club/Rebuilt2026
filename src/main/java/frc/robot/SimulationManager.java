@@ -116,4 +116,8 @@ public class SimulationManager {
   private boolean withinTolerance(double a, double b, double tolerance) {
     return Math.abs(a - b) <= tolerance;
   }
+
+  public void resetFuelForAuto() {
+    fuelCount = 8;
+  }
 }

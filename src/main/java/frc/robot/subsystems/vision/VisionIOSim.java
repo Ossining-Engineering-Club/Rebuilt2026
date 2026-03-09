@@ -84,4 +84,10 @@ public class VisionIOSim implements VisionIO {
       inputs.tagIds = new int[0];
     }
   }
+
+  @Override
+  public void resetSimState(Pose2d robotPose) {
+    visionSim.resetRobotPose(robotPose); // reset robot pose for vision sim
+    camera.getAllUnreadResults(); // clear queue of vision measurements
+  }
 }

@@ -33,8 +33,8 @@ public class TurretConstants {
   public static final double pidTolerance = Units.degreesToRadians(0.5);
 
   // angle limits
-  public static final double maxAngle = 0.0; // Units.degreesToRadians(120.0);
-  public static final double minAngle = 0.0; // Units.degreesToRadians(0.0);
+  public static final double maxAngle = Units.degreesToRadians(120.0);
+  public static final double minAngle = Units.degreesToRadians(0.0);
   public static final double storedAngle = 0;
 
   // absolute encoders

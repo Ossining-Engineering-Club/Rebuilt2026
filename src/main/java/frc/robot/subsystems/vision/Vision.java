@@ -11,6 +11,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.vision.VisionConstants.PoseEstimate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -136,5 +137,14 @@ public class Vision extends SubsystemBase {
     if (VisionConstants.IGNORE_YAW) estStdDevs.set(2, 0, Double.MAX_VALUE);
 
     return estStdDevs;
+  }
+
+  public void resetSimState(Pose2d robotPose) {
+    for (int i = 0; i < ios.length; i++) {
+      inputs[i].estimateIsPresent = false;
+      inputs[i].tagCount = 0;
+      inputs[i].tagIds = new int[0];
+      ios[i].resetSimState(robotPose);
+    }
   }
 }
