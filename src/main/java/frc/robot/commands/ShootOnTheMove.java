@@ -317,7 +317,7 @@ public class ShootOnTheMove extends Command {
     Logger.recordOutput(
         "ShooterAlignOnTheMove/ModifiedHub", new Pose2d(modifiedHub, Rotation2d.kZero));
 
-    // turret.runGoal(desiredTurretAngle);
+    turret.runGoal(desiredTurretAngle);
     shooterFlywheels.setRPM(desiredRPM);
     shooterHood.runGoal(desiredHoodAngle);
 

@@ -87,8 +87,8 @@ public class Turret extends SubsystemBase {
     }
 
     // Soft Limits
-    // if (getAngle() <= minAngle && inputs.appliedVolts < 0) setVoltage(0);
-    // if (getAngle() >= maxAngle && inputs.appliedVolts > 0) setVoltage(0);
+    if (getAngle() <= minAngle && inputs.appliedVolts < 0) setVoltage(0);
+    if (getAngle() >= maxAngle && inputs.appliedVolts > 0) setVoltage(0);
   }
 
   public double getAngle() {
@@ -131,8 +131,8 @@ public class Turret extends SubsystemBase {
 
   public void setVoltage(double voltage) {
     // Soft Limits
-    // if (getAngle() <= minAngle) voltage = Math.max(0, voltage);
-    // if (getAngle() >= maxAngle) voltage = Math.min(0, voltage);
+    if (getAngle() <= minAngle) voltage = Math.max(0, voltage);
+    if (getAngle() >= maxAngle) voltage = Math.min(0, voltage);
 
     io.setVoltage(voltage);
   }

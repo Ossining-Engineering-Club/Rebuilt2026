@@ -294,7 +294,7 @@ public class RobotContainer {
 
     // Operator Controller
     operatorController
-        .leftBumper()
+        .rightTrigger(0.9)
         .onTrue(
             Commands.runOnce(
                 () -> {
@@ -305,7 +305,7 @@ public class RobotContainer {
                 spindexer));
 
     operatorController
-        .leftBumper()
+        .rightTrigger(0.9)
         .onFalse(
             Commands.runOnce(
                 () -> {
@@ -316,7 +316,7 @@ public class RobotContainer {
                 spindexer));
 
     operatorController
-        .rightBumper()
+        .leftTrigger(0.9)
         .whileTrue(
             new ShootOnTheMove(
                 drive,
@@ -328,11 +328,11 @@ public class RobotContainer {
                 () -> -0.5 * driverController.getRightX()));
 
     operatorController
-        .leftTrigger(0.9)
+        .leftBumper()
         .whileTrue(new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
 
     operatorController
-        .rightTrigger(0.9)
+        .rightBumper()
         .onTrue(
             Commands.runOnce(
                 () -> {
@@ -353,13 +353,20 @@ public class RobotContainer {
                 feeder,
                 spindexer));
 
+    // operatorController.y().onTrue(turret.goToAngle(Units.degreesToRadians(-25)));
+    // operatorController.x().onTrue(turret.goToAngle(Units.degreesToRadians(0)));
+    // operatorController.a().onTrue(turret.goToAngle(Units.degreesToRadians(113)));
+
+    // operatorController.x().onTrue(Commands.runOnce(() -> turret.setVoltage(0.145), turret));
+    // operatorController.x().onFalse(Commands.runOnce(() -> turret.setVoltage(0.0), turret));
+
     operatorController
         .x()
         .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
     operatorController.y().onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
 
     operatorController.povUp().onTrue(intakePivot.extend());
-    operatorController.povRight().onTrue(intakePivot.upright());
+    operatorController.povLeft().onTrue(intakePivot.upright());
     operatorController.povDown().onTrue(intakePivot.retract());
 
     operatorController
