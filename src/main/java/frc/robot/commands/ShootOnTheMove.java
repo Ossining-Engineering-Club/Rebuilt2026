@@ -183,9 +183,16 @@ public class ShootOnTheMove extends Command {
     double desiredAngle = modifiedHub.minus(shooterPosition).getAngle().getRadians();
 
     double desiredTurretAngle;
-    if (desiredAngle - drive.getRotation().getRadians() >= TurretConstants.minAngle
-        && desiredAngle - drive.getRotation().getRadians() <= TurretConstants.maxAngle) {
-      desiredTurretAngle = desiredAngle - drive.getRotation().getRadians();
+    System.out.println(
+        (wrapAngle(desiredAngle - drive.getRotation().getRadians()))
+            + " "
+            + TurretConstants.minAngle
+            + " "
+            + TurretConstants.maxAngle);
+    if (wrapAngle(desiredAngle - drive.getRotation().getRadians()) >= TurretConstants.minAngle
+        && wrapAngle(desiredAngle - drive.getRotation().getRadians()) <= TurretConstants.maxAngle) {
+      System.out.println("No need to adjust drivebase");
+      desiredTurretAngle = wrapAngle(desiredAngle - drive.getRotation().getRadians());
       mainDriveRotPID.reset(
           drive.getRotation().getRadians(),
           drive.getFieldRelativeChassisSpeeds().omegaRadiansPerSecond);
@@ -202,13 +209,15 @@ public class ShootOnTheMove extends Command {
       omega = Math.copySign(omega * omega, omega);
 
       // Cancel rotational speed if it would cause the turret to go out of range
-      if (desiredAngle
-                  - (drive.getRotation().getRadians()
-                      + omega * drive.getMaxAngularSpeedRadPerSec() * 0.02)
+      if (wrapAngle(
+                  desiredAngle
+                      - (drive.getRotation().getRadians()
+                          + omega * drive.getMaxAngularSpeedRadPerSec() * 0.02))
               < TurretConstants.minAngle
-          || desiredAngle
-                  - (drive.getRotation().getRadians()
-                      + omega * drive.getMaxAngularSpeedRadPerSec() * 0.02)
+          || wrapAngle(
+                  desiredAngle
+                      - (drive.getRotation().getRadians()
+                          + omega * drive.getMaxAngularSpeedRadPerSec() * 0.02))
               > TurretConstants.maxAngle) {
         omega = 0;
       }
@@ -227,7 +236,12 @@ public class ShootOnTheMove extends Command {
               speeds,
               isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
     } else {
-      desiredTurretAngle = desiredAngle - drive.getRotation().getRadians();
+      desiredTurretAngle = wrapAngle(desiredAngle - drive.getRotation().getRadians());
+      System.out.println(
+          "Adjusting drivebase "
+              + wrapAngle(desiredTurretAngle - TurretConstants.maxAngle)
+              + " "
+              + wrapAngle(TurretConstants.minAngle - desiredTurretAngle));
       if ((desiredTurretAngle - TurretConstants.maxAngle + 2 * Math.PI) % (2 * Math.PI)
           < (TurretConstants.minAngle - desiredTurretAngle + 2 * Math.PI) % (2 * Math.PI)) {
         desiredTurretAngle = TurretConstants.maxAngle;
@@ -235,7 +249,7 @@ public class ShootOnTheMove extends Command {
         desiredTurretAngle = TurretConstants.minAngle;
       }
       double desiredDriveRotAngle =
-          Rotation2d.fromRadians(desiredAngle - desiredTurretAngle).getRadians();
+          Rotation2d.fromRadians(wrapAngle(desiredAngle - desiredTurretAngle)).getRadians();
       Logger.recordOutput("ShooterAlignOnTheMove/DesiredDriveRotAngle", desiredDriveRotAngle);
 
       // Get linear velocity
@@ -372,5 +386,9 @@ public class ShootOnTheMove extends Command {
     Logger.recordOutput("ShooterAlignOnTheMove/EstimatedTOF", TOF);
     Logger.recordOutput("ShooterAlignOnTheMove/TOFRecursions", numRecursions);
     return modifiedHub;
+  }
+
+  private double wrapAngle(double angleRadians) {
+    return (angleRadians + 101 * Math.PI) % (2 * Math.PI) - Math.PI;
   }
 }
