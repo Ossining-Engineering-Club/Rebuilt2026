@@ -242,6 +242,15 @@ public class RobotContainer {
             feeder,
             spindexer));
     NamedCommands.registerCommand(
+        "Stop Shooting",
+        Commands.runOnce(
+            () -> {
+              feeder.stopMotor();
+              spindexer.stopMotor();
+            },
+            feeder,
+            spindexer));
+    NamedCommands.registerCommand(
         "Stop Flywheels", Commands.runOnce(() -> shooterFlywheels.stop(), shooterFlywheels));
     NamedCommands.registerCommand(
         "Stop Feeder", Commands.runOnce(() -> feeder.stopMotor(), feeder));
