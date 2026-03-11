@@ -26,7 +26,7 @@ import frc.robot.subsystems.turret.TurretConstants;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class ShootOnTheMove extends Command {
+public class ShootOnTheMoveHubOnly extends Command {
   private final Drive drive;
   private final Turret turret;
   private final ShooterFlywheels shooterFlywheels;
@@ -45,11 +45,11 @@ public class ShootOnTheMove extends Command {
   private double driveRotA;
   private final ProfiledPIDController mainDriveRotPID;
   private final PIDController secondaryDriveRotPID;
-  private Translation2d target;
+  private Translation2d targetHub;
 
   private double prevSetpointVelocity = 0;
 
-  public ShootOnTheMove(
+  public ShootOnTheMoveHubOnly(
       Drive drive,
       Turret turret,
       ShooterFlywheels shooterFlywheels,
@@ -136,6 +136,12 @@ public class ShootOnTheMove extends Command {
 
   @Override
   public void initialize() {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      targetHub = FieldConstants.blueHub;
+    } else {
+      targetHub = FieldConstants.redHub;
+    }
+
     if (Constants.currentMode == Constants.Mode.SIM) {
       shooterRPMMap = ShooterAlignConstants.Sim.shooterRPMMap;
       shooterHoodMap = ShooterAlignConstants.Sim.shooterHoodMap;
@@ -166,37 +172,15 @@ public class ShootOnTheMove extends Command {
 
   @Override
   public void execute() {
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      if (drive.getPose().getX() <= FieldConstants.blueBumpCenterX) {
-        target = FieldConstants.blueHub;
-      } else {
-        if (drive.getPose().getY() >= FieldConstants.fieldCenterY) {
-          target = FieldConstants.bluePassingTopTarget;
-        } else {
-          target = FieldConstants.bluePassingBottomTarget;
-        }
-      }
-    } else {
-      if (drive.getPose().getX() >= FieldConstants.redBumpCenterX) {
-        target = FieldConstants.redHub;
-      } else {
-        if (drive.getPose().getY() >= FieldConstants.fieldCenterY) {
-          target = FieldConstants.redPassingTopTarget;
-        } else {
-          target = FieldConstants.redPassingBottomTarget;
-        }
-      }
-    }
-
     Translation2d shooterPosition =
         new Pose3d(drive.getPose())
             .plus(new Transform3d(Constants.shooterOffset, Rotation3d.kZero))
             .getTranslation()
             .toTranslation2d();
 
-    Translation2d modifiedTarget = calculateModifiedTarget(target, shooterPosition);
+    Translation2d modifiedHub = calculateModifiedHub(targetHub, shooterPosition);
 
-    double desiredAngle = modifiedTarget.minus(shooterPosition).getAngle().getRadians();
+    double desiredAngle = modifiedHub.minus(shooterPosition).getAngle().getRadians();
 
     double desiredTurretAngle;
     // System.out.println(
@@ -330,11 +314,11 @@ public class ShootOnTheMove extends Command {
               isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
     }
 
-    double distance = modifiedTarget.minus(shooterPosition).getNorm();
+    double distance = modifiedHub.minus(shooterPosition).getNorm();
 
-    // calculating magnitude of the tangential velocity of the shooter relative to the target
-    double angleFromShooterToHub = modifiedTarget.minus(shooterPosition).getAngle().getRadians();
-    double shooterTangentialVelocityRelativeToTarget =
+    // calculating magnitude of the tangential velocity of the shooter relative to the hub
+    double angleFromShooterToHub = modifiedHub.minus(shooterPosition).getAngle().getRadians();
+    double shooterTangentialVelocityRelativeToHub =
         Math.abs(
             drive.getFieldRelativeChassisSpeeds().vxMetersPerSecond
                     * Math.sin(angleFromShooterToHub)
@@ -342,8 +326,9 @@ public class ShootOnTheMove extends Command {
                     * Math.cos(angleFromShooterToHub));
 
     // scaling distance based on a constant and the tangential velocity of the shooter relative to
-    // the target
-    distance *= (1.0 + distanceIncreaseScalar * shooterTangentialVelocityRelativeToTarget);
+    // the
+    // hub
+    distance *= (1.0 + distanceIncreaseScalar * shooterTangentialVelocityRelativeToHub);
 
     double desiredRPM, desiredHoodAngle;
 
@@ -355,16 +340,16 @@ public class ShootOnTheMove extends Command {
     Logger.recordOutput("ShooterAlignOnTheMove/DesiredHoodAngle", desiredHoodAngle);
     Logger.recordOutput("ShooterAlignOnTheMove/Distance", distance);
     Logger.recordOutput(
-        "ShooterAlignOnTheMove/ShooterTangentialVelocityRelativeToTarget",
-        shooterTangentialVelocityRelativeToTarget);
+        "ShooterAlignOnTheMove/ShooterTangentialVelocityRelativeToHub",
+        shooterTangentialVelocityRelativeToHub);
     Logger.recordOutput(
         "ShooterAlignOnTheMove/DriveRotPIDSetpoint", mainDriveRotPID.getSetpoint().position);
 
     Logger.recordOutput(
         "ShooterAlignOnTheMove/ShooterPosition", new Pose2d(shooterPosition, Rotation2d.kZero));
-    Logger.recordOutput("ShooterAlignOnTheMove/Target", new Pose2d(target, Rotation2d.kZero));
+    Logger.recordOutput("ShooterAlignOnTheMove/TargetHub", new Pose2d(targetHub, Rotation2d.kZero));
     Logger.recordOutput(
-        "ShooterAlignOnTheMove/ModifiedTarget", new Pose2d(modifiedTarget, Rotation2d.kZero));
+        "ShooterAlignOnTheMove/ModifiedHub", new Pose2d(modifiedHub, Rotation2d.kZero));
 
     turret.runGoal(desiredTurretAngle);
     shooterFlywheels.setRPM(desiredRPM);
@@ -380,12 +365,12 @@ public class ShootOnTheMove extends Command {
     shooterHood.stop();
   }
 
-  public Translation2d calculateModifiedTarget(
-      Translation2d target, Translation2d shooterPosition) {
-    double distance = target.minus(shooterPosition).getNorm();
+  public Translation2d calculateModifiedHub(
+      Translation2d targetHub, Translation2d shooterPosition) {
+    double distance = targetHub.minus(shooterPosition).getNorm();
     double TOF = TOFMap.get(distance);
-    Translation2d modifiedTarget =
-        target.minus(
+    Translation2d modifiedHub =
+        targetHub.minus(
             new Translation2d(
                 drive.getFieldRelativeChassisSpeeds().vxMetersPerSecond
                     * chassisSpeedsMultiplier
@@ -395,16 +380,15 @@ public class ShootOnTheMove extends Command {
                     * (TOF + latencyCompensationSeconds)));
 
     Logger.recordOutput(
-        "ShooterAlignOnTheMove/OriginalModifiedTarget",
-        new Pose2d(modifiedTarget, Rotation2d.kZero));
+        "ShooterAlignOnTheMove/OriginalModifiedHub", new Pose2d(modifiedHub, Rotation2d.kZero));
 
     int numRecursions = 0;
 
     for (int i = 0; i < maxTOFRecursions; i++) {
-      double newDistance = modifiedTarget.minus(shooterPosition).getNorm();
+      double newDistance = modifiedHub.minus(shooterPosition).getNorm();
       double newTOF = TOFMap.get(newDistance);
-      modifiedTarget =
-          target.minus(
+      modifiedHub =
+          targetHub.minus(
               new Translation2d(
                   drive.getFieldRelativeChassisSpeeds().vxMetersPerSecond
                       * chassisSpeedsMultiplier
@@ -421,7 +405,7 @@ public class ShootOnTheMove extends Command {
     }
     Logger.recordOutput("ShooterAlignOnTheMove/EstimatedTOF", TOF);
     Logger.recordOutput("ShooterAlignOnTheMove/TOFRecursions", numRecursions);
-    return modifiedTarget;
+    return modifiedHub;
   }
 
   private double wrapAngle(double angleRadians) {
