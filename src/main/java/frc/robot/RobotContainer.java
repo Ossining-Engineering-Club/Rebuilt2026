@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeAgitate;
 import frc.robot.commands.MaintainIntakePivotAngle;
 import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.ShootOnTheMoveAuto;
@@ -256,6 +257,7 @@ public class RobotContainer {
         "Stop Feeder", Commands.runOnce(() -> feeder.stopMotor(), feeder));
     NamedCommands.registerCommand(
         "Stop Spindexer", Commands.runOnce(() -> spindexer.stopMotor(), spindexer));
+    NamedCommands.registerCommand("Intake Agitate", new IntakeAgitate(intakePivot));
   }
 
   /**
