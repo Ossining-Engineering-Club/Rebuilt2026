@@ -63,15 +63,22 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "Stop Intake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Start Shooting"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Intake Agitate"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Start Shooting"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]

@@ -28,8 +28,8 @@ public class ShooterAlignConstants {
     static {
       shooterRPMMap.put(1.5, 1566.6);
       shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2128.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2346.6); // 2396.6);
+      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0); // 2666.0);
     }
@@ -71,8 +71,8 @@ public class ShooterAlignConstants {
     static {
       shooterRPMMap.put(1.5, 1566.6);
       shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2128.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2346.6); // 2396.6);
+      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0); // 2666.0);
     }
