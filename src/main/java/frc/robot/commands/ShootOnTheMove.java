@@ -183,15 +183,15 @@ public class ShootOnTheMove extends Command {
     double desiredAngle = modifiedHub.minus(shooterPosition).getAngle().getRadians();
 
     double desiredTurretAngle;
-    System.out.println(
-        (wrapAngle(desiredAngle - drive.getRotation().getRadians()))
-            + " "
-            + TurretConstants.minAngle
-            + " "
-            + TurretConstants.maxAngle);
+    // System.out.println(
+    //     (wrapAngle(desiredAngle - drive.getRotation().getRadians()))
+    //         + " "
+    //         + TurretConstants.minAngle
+    //         + " "
+    //         + TurretConstants.maxAngle);
     if (wrapAngle(desiredAngle - drive.getRotation().getRadians()) >= TurretConstants.minAngle
         && wrapAngle(desiredAngle - drive.getRotation().getRadians()) <= TurretConstants.maxAngle) {
-      System.out.println("No need to adjust drivebase");
+      // System.out.println("No need to adjust drivebase");
       desiredTurretAngle = wrapAngle(desiredAngle - drive.getRotation().getRadians());
       mainDriveRotPID.reset(
           drive.getRotation().getRadians(),
@@ -237,11 +237,11 @@ public class ShootOnTheMove extends Command {
               isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
     } else {
       desiredTurretAngle = wrapAngle(desiredAngle - drive.getRotation().getRadians());
-      System.out.println(
-          "Adjusting drivebase "
-              + wrapAngle(desiredTurretAngle - TurretConstants.maxAngle)
-              + " "
-              + wrapAngle(TurretConstants.minAngle - desiredTurretAngle));
+      // System.out.println(
+      //     "Adjusting drivebase "
+      //         + wrapAngle(desiredTurretAngle - TurretConstants.maxAngle)
+      //         + " "
+      //         + wrapAngle(TurretConstants.minAngle - desiredTurretAngle));
       if ((desiredTurretAngle - TurretConstants.maxAngle + 2 * Math.PI) % (2 * Math.PI)
           < (TurretConstants.minAngle - desiredTurretAngle + 2 * Math.PI) % (2 * Math.PI)) {
         desiredTurretAngle = TurretConstants.maxAngle;
@@ -268,16 +268,36 @@ public class ShootOnTheMove extends Command {
       //         + mainDriveRotPID.getSetpoint().position
       //         + " "
       //         + rotPIDOutput);
-      double omega =
+      double omegaPID =
           rotPIDOutput
               // + mainDriveRotPID.getSetpoint().velocity
               + driveRotA
                   * ((mainDriveRotPID.getSetpoint().velocity - prevSetpointVelocity) / 0.02);
+
+      // Apply rotation deadband
+      double omegaJoystick =
+          MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DriveCommands.DEADBAND);
+
+      // Square rotation value for more precise control and convert to rad/sec
+      omegaJoystick =
+          Math.copySign(omegaJoystick * omegaJoystick, omegaJoystick)
+              * drive.getMaxAngularSpeedRadPerSec();
+
       Logger.recordOutput("rotPIDOutput", rotPIDOutput);
       Logger.recordOutput(
           "acceleration compensation",
           driveRotA * (mainDriveRotPID.getSetpoint().velocity - prevSetpointVelocity) / 0.02);
       Logger.recordOutput("rot pid setpoint velocity", mainDriveRotPID.getSetpoint().velocity);
+
+      // If rotation from joystick and rotation from PID are in the same direction, use whichever
+      // one has a greater magnitude
+      // else, just use the rotation from the PID
+      double omega;
+      if (Math.signum(omegaJoystick) == Math.signum(omegaPID) || Math.signum(omegaPID) == 0) {
+        omega = Math.copySign(Math.max(Math.abs(omegaJoystick), Math.abs(omegaPID)), omegaJoystick);
+      } else {
+        omega = omegaPID;
+      }
 
       // Convert to field relative speeds & send command
       ChassisSpeeds speeds =
