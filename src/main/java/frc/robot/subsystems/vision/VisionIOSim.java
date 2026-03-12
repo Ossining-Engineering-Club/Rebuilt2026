@@ -67,10 +67,16 @@ public class VisionIOSim implements VisionIO {
 
         List<PhotonTrackedTarget> tags = result.getTargets();
         int[] tagIds = new int[tags.size()];
+        double[] ambuguities = new double[tags.size()];
+        double[] distToCams = new double[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
           tagIds[i] = tags.get(i).getFiducialId();
+          ambuguities[i] = tags.get(i).getPoseAmbiguity();
+          distToCams[i] = tags.get(i).getBestCameraToTarget().getTranslation().getNorm();
         }
         inputs.tagIds = tagIds;
+        inputs.ambiguities = ambuguities;
+        inputs.distToCams = distToCams;
 
         inputs.estimatedPose = optionalEstimate.get().estimatedPose.toPose2d();
         inputs.timestampSeconds = optionalEstimate.get().timestampSeconds;

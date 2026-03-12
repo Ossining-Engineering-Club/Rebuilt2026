@@ -29,7 +29,9 @@ public class VisionConstants {
   // public static final double MAX_HEIGHT = 0.305;
   // public static final double MAX_ANGLE = 0.3;
 
-  // public static final double MAX_SINGLE_TAG_TRANSLATIONAL_DELTA = 1.0;
+  public static final double MAX_SINGLE_TAG_TRANSLATIONAL_DELTA = 1.5;
+
+  public static final double SINGLE_TAG_AMBIGUITY_LIMIT = 0.7;
 
   // sim constants
   public static final Transform3d frontLLRobotToCamOffset =

@@ -21,10 +21,16 @@ public class VisionIOReal implements VisionIO {
       inputs.tagCount = poseEstimate.tagCount;
 
       int[] tagIds = new int[poseEstimate.tagCount];
+      double[] ambiguities = new double[poseEstimate.tagCount];
+      double[] distToCams = new double[poseEstimate.tagCount];
       for (int i = 0; i < poseEstimate.tagCount; i++) {
         tagIds[i] = poseEstimate.rawFiducials[i].id;
+        ambiguities[i] = poseEstimate.rawFiducials[i].ambiguity;
+        distToCams[i] = poseEstimate.rawFiducials[i].distToCamera;
       }
       inputs.tagIds = tagIds;
+      inputs.ambiguities = ambiguities;
+      inputs.distToCams = distToCams;
 
       inputs.estimatedPose = poseEstimate.pose;
       inputs.timestampSeconds = poseEstimate.timestampSeconds;

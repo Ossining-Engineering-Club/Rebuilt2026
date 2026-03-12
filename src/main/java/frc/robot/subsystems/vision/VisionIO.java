@@ -11,6 +11,8 @@ public interface VisionIO {
     public Pose2d estimatedPose = new Pose2d();
     public double timestampSeconds = 0;
     public boolean estimateIsPresent = false;
+    public double[] ambiguities = new double[0];
+    public double[] distToCams = new double[0];
     public String cameraName = "";
   }
 

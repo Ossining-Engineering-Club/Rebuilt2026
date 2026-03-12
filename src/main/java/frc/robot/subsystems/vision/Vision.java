@@ -66,6 +66,11 @@ public class Vision extends SubsystemBase {
         // if (Math.abs(inputs[i].estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE)
         //   continue;
 
+        // don't use if there is a only one tag and the ambiguity is too high
+        if (inputs[i].tagCount == 1
+            && inputs[i].ambiguities.length == 1
+            && inputs[i].ambiguities[0] > VisionConstants.SINGLE_TAG_AMBIGUITY_LIMIT) continue;
+
         double translationalDelta =
             Math.hypot(
                 inputs[i].estimatedPose.getX() - robotPose.getX(),
@@ -73,7 +78,12 @@ public class Vision extends SubsystemBase {
 
         Matrix<N3, N1> stddevs =
             getEstimationStdDevs(
-                inputs[i].estimatedPose, inputs[i].tagIds, translationalDelta, isRobotOverBump);
+                inputs[i].estimatedPose,
+                inputs[i].tagIds,
+                inputs[i].ambiguities,
+                inputs[i].distToCams,
+                translationalDelta,
+                isRobotOverBump);
 
         addedPose = true;
         Logger.recordOutput(
@@ -100,7 +110,12 @@ public class Vision extends SubsystemBase {
   }
 
   public Matrix<N3, N1> getEstimationStdDevs(
-      Pose2d estimatedPose, int[] tagIds, double translationalDelta, boolean isRobotOverBump) {
+      Pose2d estimatedPose,
+      int[] tagIds,
+      double[] ambiguities,
+      double[] distToCams,
+      double translationalDelta,
+      boolean isRobotOverBump) {
     // if the robot is over a bump, fully trust vision
     // if (isRobotOverBump == true) {
     //   return VecBuilder.fill(0.0, 0.0, 0.0);
@@ -109,14 +124,14 @@ public class Vision extends SubsystemBase {
     var estStdDevs = VisionConstants.SINGLE_TAG_STD_DEVS;
     int numTags = 0;
     double avgDist = 0;
-    for (int tagId : tagIds) {
+    for (int i = 0; i < tagIds.length; i++) {
       // if nonexistent tag, ignore
-      var tagPose = VisionConstants.TAG_LAYOUT.getTagPose(tagId);
+      var tagPose = VisionConstants.TAG_LAYOUT.getTagPose(tagIds[i]);
       if (tagPose.isEmpty()) continue;
 
       numTags++;
       avgDist +=
-          tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
+          distToCams[i]; // tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
     }
     if (numTags == 0) return estStdDevs;
 
@@ -127,12 +142,17 @@ public class Vision extends SubsystemBase {
     // increase std devs based on (average) distance
     if (numTags == 1 && avgDist > 7)
       estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-    else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+    else {
+      estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+      // increase std devs based on ambiguity if only one tag is visible
+      if (numTags == 1) {
+        estStdDevs = estStdDevs.times(1 + (ambiguities[0] * ambiguities[0]) * 2);
+      }
+    }
 
-    // if (numTags == 1
-    //         && translationalDelta > VisionConstants.MAX_SINGLE_TAG_TRANSLATIONAL_DELTA) {
-    //     estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-    // }
+    if (numTags == 1 && translationalDelta > VisionConstants.MAX_SINGLE_TAG_TRANSLATIONAL_DELTA) {
+      estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
 
     if (VisionConstants.IGNORE_YAW) estStdDevs.set(2, 0, Double.MAX_VALUE);
 
