@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -15,9 +15,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "Extend Intake"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Extend Intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Maintain Intaking Angle"
+                      }
+                    }
+                  ]
                 }
               },
               {

@@ -131,7 +131,8 @@ public class Vision extends SubsystemBase {
 
       numTags++;
       avgDist +=
-          distToCams[i]; // tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
+          distToCams[
+              i]; // tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
     }
     if (numTags == 0) return estStdDevs;
 

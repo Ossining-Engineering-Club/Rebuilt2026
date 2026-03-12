@@ -258,6 +258,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Stop Spindexer", Commands.runOnce(() -> spindexer.stopMotor(), spindexer));
     NamedCommands.registerCommand("Intake Agitate", new IntakeAgitate(intakePivot));
+    NamedCommands.registerCommand(
+        "Maintain Intaking Angle",
+        new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
   }
 
   /**
