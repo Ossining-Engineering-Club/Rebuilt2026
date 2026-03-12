@@ -1,12 +1,11 @@
 package frc.robot.subsystems.intakerollers;
 
 public class IntakeRollersConstants {
-  // MOST VALUES OF 0.0 ARE PLACEHOLDERS
   // CAN ID
   public static final int intakeRollersCANID = 21;
 
   // Motor Power Level
-  public static final double forwardVoltage = 0.8 * 12.0;
+  public static final double forwardVoltage = 12.0;
   public static final double reverseVoltage = -1.0;
 
   // Motor Constants

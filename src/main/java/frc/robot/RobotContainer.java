@@ -395,6 +395,20 @@ public class RobotContainer {
     //                     + 10 * (-MathUtil.applyDeadband(operatorController.getRightY(), 0.1))),
     //         shooterFlywheels));
 
+    intakePivot.setDefaultCommand(
+        Commands.run(
+            () ->
+                intakePivot.setVoltage(
+                    0.5 * 12.0 * MathUtil.applyDeadband(-operatorController.getLeftY(), 0.1)),
+            intakePivot));
+
+    turret.setDefaultCommand(
+        Commands.run(
+            () ->
+                turret.setVoltage(
+                    0.25 * 12.0 * MathUtil.applyDeadband(-operatorController.getRightX(), 0.1)),
+            turret));
+
     // Manual Controller
     // Feeder manual control
     manualController
@@ -520,20 +534,6 @@ public class RobotContainer {
     manualController
         .povDown()
         .onFalse(Commands.runOnce(() -> shooterHood.setVoltage(0), shooterHood));
-
-    intakePivot.setDefaultCommand(
-        Commands.run(
-            () ->
-                intakePivot.setVoltage(
-                    0.5 * 12.0 * MathUtil.applyDeadband(-manualController.getLeftY(), 0.1)),
-            intakePivot));
-
-    turret.setDefaultCommand(
-        Commands.run(
-            () ->
-                turret.setVoltage(
-                    0.25 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
-            turret));
 
     // Feeder auto unjam
     Logger.recordOutput("Time of Last Feeder Jam", -1);

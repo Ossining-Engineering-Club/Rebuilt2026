@@ -19,17 +19,17 @@ public class IntakePivotConstants {
   public static final double simMaxVelocity = Units.degreesToRadians(360);
   public static final double simMaxAcceleration = Units.degreesToRadians(720);
   public static final double pidTolerance = Units.degreesToRadians(0.5);
-  public static final double maintainAngleTolerance = Units.degreesToRadians(2.0);
+  public static final double maintainAngleTolerance = Units.degreesToRadians(1.0);
 
   // Angle Setpoints
   public static final double maxAngle = Units.degreesToRadians(108.0);
-  public static final double minAngle = Units.degreesToRadians(4.0);
+  public static final double minAngle = Units.degreesToRadians(9.5);
   public static final double startAngle = Units.degreesToRadians(108.0);
-  public static final double extendedAngle = Units.degreesToRadians(4.0);
+  public static final double extendedAngle = Units.degreesToRadians(9.5);
   public static final double uprightAngle = Units.degreesToRadians(75.0);
   public static final double retractedAngle = Units.degreesToRadians(108.0);
   public static final double agitationTopAngle = Units.degreesToRadians(40.0);
-  public static final double agitationBottomAngle = Units.degreesToRadians(4.0);
+  public static final double agitationBottomAngle = Units.degreesToRadians(9.5);
 
   public static final double agitationPeriodSeconds = 2;
 
