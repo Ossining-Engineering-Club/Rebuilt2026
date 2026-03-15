@@ -30,9 +30,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "LeftCD-2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftCD-2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Maintain Intaking Angle"
+                }
+              }
+            ]
           }
         },
         {
@@ -62,33 +75,9 @@
                       }
                     },
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.0
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
-                        "name": "Stop Shooting"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LeftCD-4"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LeftCD-5"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Start Shooting"
+                        "name": "Intake Agitate"
                       }
                     }
                   ]

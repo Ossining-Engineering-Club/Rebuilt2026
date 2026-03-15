@@ -30,9 +30,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "RightCO-2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightCO-2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Maintain Intaking Angle"
+                }
+              }
+            ]
           }
         },
         {
@@ -62,9 +75,22 @@
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "parallel",
                       "data": {
-                        "pathName": "RightCO-4"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Intake Agitate"
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "RightCO-4"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]

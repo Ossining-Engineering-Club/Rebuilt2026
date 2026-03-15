@@ -76,22 +76,15 @@
                       }
                     },
                     {
-                      "type": "parallel",
+                      "type": "named",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Intake Agitate"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Start Shooting"
-                            }
-                          }
-                        ]
+                        "name": "Start Shooting"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Agitate"
                       }
                     }
                   ]
