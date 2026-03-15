@@ -5,8 +5,8 @@ public class IntakeRollersConstants {
   public static final int intakeRollersCANID = 21;
 
   // Motor Power Level
-  public static final double forwardVoltage = 12.0;
-  public static final double reverseVoltage = -1.0;
+  public static final double forwardVoltage = 0.8 * 12.0;
+  public static final double reverseVoltage = -0.4 * 12.0;
 
   // Motor Constants
   public static final boolean isInverted = true;
