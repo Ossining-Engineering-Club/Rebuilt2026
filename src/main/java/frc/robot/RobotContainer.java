@@ -348,7 +348,7 @@ public class RobotContainer {
                 spindexer));
 
     operatorController
-        .rightTrigger(0.9)
+        .rightBumper()
         .onFalse(
             Commands.runOnce(
                 () -> {
