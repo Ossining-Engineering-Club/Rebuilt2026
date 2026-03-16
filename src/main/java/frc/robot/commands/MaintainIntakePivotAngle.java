@@ -23,17 +23,19 @@ public class MaintainIntakePivotAngle extends Command {
 
   @Override
   public void execute() {
-    if (Math.abs(intakePivot.getAngle() - angle) >= IntakePivotConstants.maintainAngleTolerance) {
+    if (Math.abs(intakePivot.getAngle() - angle) >= IntakePivotConstants.maintainAngleTolerance
+        && intakePivot.getAngle() > angle) {
       adjusting = true;
     }
-    if (intakePivot.atGoal()) {
+    if (intakePivot.atGoal() || intakePivot.getAngle() < angle) {
       adjusting = false;
     }
 
     if (adjusting) {
       intakePivot.runGoal(angle);
     } else {
-      intakePivot.stop();
+      // intakePivot.stop();
+      intakePivot.setVoltage(IntakePivotConstants.holdingIntakingAngleVoltage);
     }
   }
 

@@ -23,7 +23,7 @@ public class IntakePivotConstants {
 
   // Angle Setpoints
   public static final double maxAngle = Units.degreesToRadians(108.0);
-  public static final double minAngle = Units.degreesToRadians(9.5);
+  public static final double minAngle = Units.degreesToRadians(1.0);
   public static final double startAngle = Units.degreesToRadians(108.0);
   public static final double extendedAngle = Units.degreesToRadians(9.5);
   public static final double uprightAngle = Units.degreesToRadians(75.0);
@@ -32,6 +32,8 @@ public class IntakePivotConstants {
   public static final double agitationBottomAngle = Units.degreesToRadians(9.5);
 
   public static final double agitationPeriodSeconds = 2;
+
+  public static final double holdingIntakingAngleVoltage = -0.49;
 
   // Motor Constants
   public static final int stallCurrentLimit = 38;
