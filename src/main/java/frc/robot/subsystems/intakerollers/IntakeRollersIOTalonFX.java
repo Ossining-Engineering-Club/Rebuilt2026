@@ -5,6 +5,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import org.littletonrobotics.junction.Logger;
@@ -16,6 +17,8 @@ public class IntakeRollersIOTalonFX implements IntakeRollersIO {
     rollersMotor = new TalonFX(intakeRollersCANID);
 
     var config = new TalonFXConfiguration();
+    config.MotorOutput.Inverted =
+        isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimit = rollersMotorSupplyCurrentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;

@@ -11,7 +11,6 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,8 +20,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,7 +29,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants.PoseEstimate;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -61,6 +61,7 @@ public class Drive extends SubsystemBase {
                   Meters.of(wheelRadiusMeters),
                   DriveConstants.steerInertia,
                   wheelCOF))
+          .withTrackLengthTrackWidth(Meters.of(wheelBase), Meters.of(trackWidth))
           .withBumperSize(Inches.of(3 + 24 + 3), Inches.of(3 + 30 + 3));
 
   static final Lock odometryLock = new ReentrantLock();
@@ -83,6 +84,8 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
+  private final Vision vision;
+
   private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
   public Drive(
@@ -91,12 +94,14 @@ public class Drive extends SubsystemBase {
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO,
+      Vision vision,
       Consumer<Pose2d> resetSimulationPoseCallBack) {
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
     modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
+    this.vision = vision;
     this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
 
     // Usage reporting for swerve template
@@ -193,6 +198,9 @@ public class Drive extends SubsystemBase {
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
+    // Correct odometry with vision
+    updateEstimates(vision.getEstimatedGlobalPoses(getPose(), isRobotOverBump()));
+
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
@@ -283,6 +291,11 @@ public class Drive extends SubsystemBase {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
+  @AutoLogOutput(key = "SwerveChassisSpeeds/MeasuredFieldRelative")
+  public ChassisSpeeds getFieldRelativeChassisSpeeds() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
+  }
+
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];
@@ -316,15 +329,17 @@ public class Drive extends SubsystemBase {
   public void setPose(Pose2d pose) {
     resetSimulationPoseCallBack.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      vision.resetSimState(pose);
+    }
   }
 
-  /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  /** Updates pose estimator with vision measurements. */
+  public void updateEstimates(PoseEstimate... poses) {
+    for (int i = 0; i < poses.length; i++) {
+      poseEstimator.addVisionMeasurement(
+          poses[i].estimatedPose(), poses[i].timestampSeconds(), poses[i].standardDev());
+    }
   }
 
   /** Returns the maximum linear speed in meters per sec. */
@@ -345,5 +360,22 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  /** Returns whether the robot's wheels are touching the bump */
+  @AutoLogOutput(key = "isRobotOverBump")
+  public boolean isRobotOverBump() {
+    var pose = getPose();
+    if ((pose.getX() >= FieldConstants.blueBumpMinX
+            && pose.getX() <= FieldConstants.blueBumpMaxX
+            && pose.getY() >= FieldConstants.blueBumpMinY
+            && pose.getY() <= FieldConstants.blueBumpMaxY)
+        || (pose.getX() >= FieldConstants.redBumpMinX
+            && pose.getX() <= FieldConstants.redBumpMaxX
+            && pose.getY() >= FieldConstants.redBumpMinY
+            && pose.getY() <= FieldConstants.redBumpMaxY)) {
+      return true;
+    }
+    return false;
   }
 }

@@ -5,8 +5,8 @@ import edu.wpi.first.math.util.Units;
 
 public class TurretConstants {
   // motor constants
-  public static final int canId = 0;
-  public static final double motorReduction = 51.75 / 1.0; // 143.75 / 1.0;
+  public static final int canId = 30;
+  public static final double motorReduction = 143.75 / 1.0; // 51.75 / 1.0; // 143.75 / 1.0;
   public static final double encoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
   public static final double encoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
   public static final boolean isInverted = false;
@@ -14,13 +14,13 @@ public class TurretConstants {
   public static final int freeCurrentLimit = 38;
 
   // control system
-  public static final double kP = 0;
+  public static final double kP = 30;
   public static final double kI = 0.0;
-  public static final double kD = 0.0;
-  public static final double kS = 0.0;
-  public static final double kV = 0.0;
+  public static final double kD = 1.0;
+  public static final double kS = 0.145;
+  public static final double kV = 2;
   public static final double kA = 0.0;
-  public static final double maxVelocity = Units.degreesToRadians(360.0);
+  public static final double maxVelocity = Units.degreesToRadians(180.0);
   public static final double maxAcceleration = Units.degreesToRadians(720.0);
   public static final double simP = 50;
   public static final double simI = 0;
@@ -33,13 +33,14 @@ public class TurretConstants {
   public static final double pidTolerance = Units.degreesToRadians(0.5);
 
   // angle limits
-  public static final double maxAngle = Units.degreesToRadians(120.0);
-  public static final double minAngle = Units.degreesToRadians(-30.0);
+  public static final double maxAngle = Units.degreesToRadians(113.0);
+  public static final double minAngle = Units.degreesToRadians(-25.0);
+  public static final double startAngle = Units.degreesToRadians(0.0);
   public static final double storedAngle = 0;
 
   // absolute encoders
-  public static final int AE18tChannel = 0;
-  public static final int AE19tChannel = 1;
+  public static final int AE18tChannel = 3;
+  public static final int AE19tChannel = 4;
   public static final double AE18tReduction = (138.0 / 24.0) * (40.0 / 18.0);
   public static final double AE19tReduction = (138.0 / 24.0) * (40.0 / 19.0);
   public static final double AE18tOffsetRotations = 0;

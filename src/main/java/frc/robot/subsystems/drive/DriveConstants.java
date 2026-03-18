@@ -62,9 +62,9 @@ public final class DriveConstants {
   public static final double coupleRatio = 54.0 / 16.0;
 
   // Turn PID configuration
-  public static final double turnP = 10;
+  public static final double turnP = 50;
   public static final double turnI = 0;
-  public static final double turnD = 1;
+  public static final double turnD = 0;
   public static final double turnS = 0;
   public static final double turnV = 0;
   public static final double turnA = 0;
@@ -81,7 +81,7 @@ public final class DriveConstants {
   public static final MomentOfInertia steerInertia = KilogramSquareMeters.of(0.015);
   public static final MomentOfInertia driveInertia = KilogramSquareMeters.of(0.025);
   // Simulated voltage necessary to overcome friction
-  public static final Voltage steerFrictionVoltage = Volts.of(0.8);
+  public static final Voltage steerFrictionVoltage = Volts.of(1.2);
   public static final Voltage driveFrictionVoltage = Volts.of(0.2);
 
   public static final int pigeonId = 13;
@@ -90,33 +90,33 @@ public final class DriveConstants {
   public static final boolean invertRightSide = false;
 
   // Front Left
-  public static final int frontLeftDriveMotorId = 2;
-  public static final int frontLeftSteerMotorId = 6;
-  public static final int frontLeftEncoderId = 10;
-  public static final Angle frontLeftEncoderOffset = Radians.of(0);
-  public static final boolean frontLeftSteerMotorInverted = true;
+  public static final int frontLeftDriveMotorId = 1;
+  public static final int frontLeftSteerMotorId = 5;
+  public static final int frontLeftEncoderId = 9;
+  public static final Angle frontLeftEncoderOffset = Radians.of(2.097 - Math.PI);
+  public static final boolean frontLeftSteerMotorInverted = false;
   public static final boolean frontLeftEncoderInverted = false;
 
   public static final Distance frontLeftXPos = Meters.of(moduleTranslations[0].getX());
   public static final Distance frontLeftYPos = Meters.of(moduleTranslations[0].getY());
 
   // Front Right
-  public static final int frontRightDriveMotorId = 3;
-  public static final int frontRightSteerMotorId = 7;
-  public static final int frontRightEncoderId = 11;
-  public static final Angle frontRightEncoderOffset = Radians.of(0);
-  public static final boolean frontRightSteerMotorInverted = true;
+  public static final int frontRightDriveMotorId = 2;
+  public static final int frontRightSteerMotorId = 6;
+  public static final int frontRightEncoderId = 10;
+  public static final Angle frontRightEncoderOffset = Radians.of(0.831);
+  public static final boolean frontRightSteerMotorInverted = false;
   public static final boolean frontRightEncoderInverted = false;
 
   public static final Distance frontRightXPos = Meters.of(moduleTranslations[1].getX());
   public static final Distance frontRightYPos = Meters.of(moduleTranslations[1].getY());
 
   // Back Left
-  public static final int backLeftDriveMotorId = 1;
-  public static final int backLeftSteerMotorId = 5;
-  public static final int backLeftEncoderId = 9;
-  public static final Angle backLeftEncoderOffset = Radians.of(0);
-  public static final boolean backLeftSteerMotorInverted = true;
+  public static final int backLeftDriveMotorId = 3;
+  public static final int backLeftSteerMotorId = 7;
+  public static final int backLeftEncoderId = 11;
+  public static final Angle backLeftEncoderOffset = Radians.of(2.178 - Math.PI);
+  public static final boolean backLeftSteerMotorInverted = false;
   public static final boolean backLeftEncoderInverted = false;
 
   public static final Distance backLeftXPos = Meters.of(moduleTranslations[2].getX());
@@ -126,8 +126,8 @@ public final class DriveConstants {
   public static final int backRightDriveMotorId = 4;
   public static final int backRightSteerMotorId = 8;
   public static final int backRightEncoderId = 12;
-  public static final Angle backRightEncoderOffset = Radians.of(0);
-  public static final boolean backRightSteerMotorInverted = true;
+  public static final Angle backRightEncoderOffset = Radians.of(1.835);
+  public static final boolean backRightSteerMotorInverted = false;
   public static final boolean backRightEncoderInverted = false;
 
   public static final Distance backRightXPos = Meters.of(moduleTranslations[3].getX());

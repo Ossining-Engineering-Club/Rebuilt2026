@@ -540,6 +540,47 @@ public class FuelSim {
     spawnFuel(launchPose.getTranslation(), new Translation3d(xVel, yVel, verticalVel));
   }
 
+  /**
+   * Spawns a fuel onto the field with a specified launch velocity and angles, accounting for robot
+   * movement
+   *
+   * @param launchVelocity Initial launch velocity
+   * @param hoodAngle Hood angle where 0 is launching horizontally and 90 degrees is launching
+   *     straight up
+   * @param turretYaw <i>Robot-relative</i> turret yaw
+   * @param launchRobotRelativeTranslation Translation relative to the robot that the fuel should
+   *     launch at
+   * @throws IllegalStateException if robot is not registered
+   */
+  public void launchFuel(
+      LinearVelocity launchVelocity,
+      Angle hoodAngle,
+      Angle turretYaw,
+      Translation3d launchRobotRelativeTranslation) {
+    if (robotPoseSupplier == null || robotFieldSpeedsSupplier == null) {
+      throw new IllegalStateException("Robot must be registered before launching fuel.");
+    }
+
+    Pose3d launchPose =
+        new Pose3d(this.robotPoseSupplier.get())
+            .plus(new Transform3d(launchRobotRelativeTranslation, Rotation3d.kZero));
+    ChassisSpeeds fieldSpeeds = this.robotFieldSpeedsSupplier.get();
+
+    double horizontalVel = Math.cos(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
+    double verticalVel = Math.sin(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
+    double xVel =
+        horizontalVel
+            * Math.cos(turretYaw.plus(launchPose.getRotation().getMeasureZ()).in(Radians));
+    double yVel =
+        horizontalVel
+            * Math.sin(turretYaw.plus(launchPose.getRotation().getMeasureZ()).in(Radians));
+
+    xVel += fieldSpeeds.vxMetersPerSecond;
+    yVel += fieldSpeeds.vyMetersPerSecond;
+
+    spawnFuel(launchPose.getTranslation(), new Translation3d(xVel, yVel, verticalVel));
+  }
+
   protected void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {
     Translation2d relativePos =
         new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero).relativeTo(robot).getTranslation();

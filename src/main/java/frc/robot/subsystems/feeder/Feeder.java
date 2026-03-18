@@ -52,4 +52,8 @@ public class Feeder extends SubsystemBase {
   public void setState(FeederState state) {
     this.state = state;
   }
+
+  public double getStatorCurrent() {
+    return inputs.statorCurrent;
+  }
 }

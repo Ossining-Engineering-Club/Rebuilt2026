@@ -1,30 +1,23 @@
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import org.littletonrobotics.junction.AutoLog;
-//import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public interface VisionIO {
-    @AutoLog
-    public static class VisionIOInputs {
-        public int[] tagIds = new int[0];
-        public Pose3d estimatedPose;
-        public double timestampSeconds;
-        //public PoseStrategy strategy;
-        public boolean estimateIsPresent = false;
+  @AutoLog
+  public static class VisionIOInputs {
+    public int tagCount = 0;
+    public int[] tagIds = new int[0];
+    public Pose2d estimatedPose = new Pose2d();
+    public double timestampSeconds = 0;
+    public boolean estimateIsPresent = false;
+    public double[] ambiguities = new double[0];
+    public double[] distToCams = new double[0];
+    public String cameraName = "";
+  }
 
-        // focused pose estimation
-        public Pose3d focusedEstimatedPose;
-        public double focusedTimestampSeconds;
-        //public PoseStrategy focusedStrategy;
-        public boolean seesFocusTag = false;
-        public int focusTag = 0;
+  /** Updates the set of loggable inputs. */
+  public default void updateInputs(VisionIOInputs inputs) {}
 
-        public String cameraName = "";
-    }
-
-    /** Updates the set of loggable inputs. */
-    public default void updateInputs(VisionIOInputs inputs) {}
-
-    public default void setFocusTag(int tag) {}
+  public default void resetSimState(Pose2d robotPose) {}
 }

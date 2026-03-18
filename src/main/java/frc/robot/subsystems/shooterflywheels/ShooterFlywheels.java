@@ -1,81 +1,82 @@
 package frc.robot.subsystems.shooterflywheels;
 
-import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.shooterflywheels.ShooterFlywheelsConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
-public class ShooterFlywheels extends SubsystemBase{
-    public static enum ShooterFlywheelsState {
-        SHOOT,
-        REVERSE,
-        STOPPED
+public class ShooterFlywheels extends SubsystemBase {
+  public static enum ShooterFlywheelsState {
+    FORWARD,
+    REVERSE,
+    STOPPED
+  }
+
+  private final ShooterFlywheelsIO io;
+  private final ShooterFlywheelsIOInputsAutoLogged inputs =
+      new ShooterFlywheelsIOInputsAutoLogged();
+
+  private ShooterFlywheelsState state;
+
+  private double rpmSetpoint = 0;
+
+  /** Shooter Flywheels construction */
+  public ShooterFlywheels(ShooterFlywheelsIO io) {
+    this.io = io;
+    state = ShooterFlywheelsState.STOPPED;
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter Flywheels", inputs);
+
+    Logger.recordOutput("Shooter RPM", getRPM());
+  }
+
+  /** Sets RPM of flywheel for velocity control */
+  public void setRPM(double RPM) {
+    rpmSetpoint = RPM;
+    if (RPM == 0.0) {
+      // if requested RPM is 0, just set the voltage to 0 rather than using velocity control
+      stop();
+    } else {
+      Logger.recordOutput("Shooter RPM Setpoint", RPM);
+      if (RPM > 0.0) setState(ShooterFlywheelsState.FORWARD);
+      else setState(ShooterFlywheelsState.REVERSE);
+      io.setRPM(RPM);
     }
+  }
 
-    private final ShooterFlywheelsIO io;
-    private final ShooterFlywheelsIOInputsAutologged inputs = new ShooterFlywheelsIOInputsAutologged();
+  /** Stops flywheel */
+  public void stop() {
+    rpmSetpoint = 0;
+    Logger.recordOutput("Shooter RPM Setpoint", 0.0);
+    state = ShooterFlywheelsState.STOPPED;
+    io.setVoltage(0.0);
+  }
 
-    private ShooterFlywheelsState state;
+  /** Sets voltage of flywheel motors */
+  public void setVoltage(double voltage) {
+    if (voltage == 0.0) setState(ShooterFlywheelsState.STOPPED);
+    else if (voltage > 0.0) setState(ShooterFlywheelsState.FORWARD);
+    else setState(ShooterFlywheelsState.REVERSE);
+    io.setVoltage(voltage);
+  }
 
-    /** Intake Rollers construction */
-    public ShooterFlywheels(ShooterFlywheelsIO io) {
-        this.io = io;
-        state = ShooterFlywheelsState.STOPPED;
-    }
+  public double getRPM() {
+    return inputs.RPM;
+  }
 
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Intake Rollers", inputs);
+  public double getRPMSetpoint() {
+    return rpmSetpoint;
+  }
 
-        if (state == ShooterFlywheelsState.STOPPED) {
-            io.setRollersMotorVoltage(0.0);
-        }
-    }
+  public ShooterFlywheelsState getState() {
+    return state;
+  }
 
-    /** Sets motor voltage to predefined RPM forward */
-    public void startMotor() {
-        state = ShooterFlywheelsState.SHOOT;
-        io.setShooterMotorVoltage(
-            
-        );
-    }
-
-    /** Reverses Intake Rollers motor */
-    public void reverseMotor() {
-        state = ShooterFlywheelsState.REVERSE;
-        //if (Constants.currentMode == Mode.SIM) {}
-        io.setShooterMotorVoltage(ShooterFlywheelsConstants.reverseVoltage);
-    }
-
-    /** Stops motor */
-    public void stopMotor() {
-        state = ShooterFlywheelsState.STOPPED;
-        io.setShooterMotorVoltage(0.0);
-    }
-
-    public ShooterFlywheelsState getState() {
-        return state;
-    }
-
-    public void setState(ShooterFlywheelsState state) {
-        this.state = state;
-    }
-
-    public Command intake() {
-        return Commands.runOnce(() -> startMotor(), this);
-    }
-
-    public Command eject() {
-        return Commands.runOnce(() -> reverseMotor(), this);
-    }
+  private void setState(ShooterFlywheelsState state) {
+    this.state = state;
+  }
 }
-

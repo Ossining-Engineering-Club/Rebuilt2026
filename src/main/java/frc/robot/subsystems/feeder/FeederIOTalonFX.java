@@ -5,6 +5,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import org.littletonrobotics.junction.Logger;
@@ -19,6 +20,8 @@ public class FeederIOTalonFX implements FeederIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.SupplyCurrentLimit = feederMotorSupplyCurrentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.MotorOutput.Inverted =
+        isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
     tryUntilOk(5, () -> feederMotor.getConfigurator().apply(config, 0.25));
   }
