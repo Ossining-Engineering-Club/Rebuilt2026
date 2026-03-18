@@ -3,7 +3,6 @@ package frc.robot.commands;
 import static frc.robot.subsystems.intakepivot.IntakePivotConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.intakepivot.IntakePivot;
 
 // Agitate hopper by moving intake pivot following a cosine curve
@@ -33,6 +32,7 @@ public class IntakeAgitate extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    CommandScheduler.getInstance().schedule(intakePivot.goToAngle(extendedAngle));
+    // CommandScheduler.getInstance().schedule(intakePivot.goToAngle(extendedAngle));
+    intakePivot.stop();
   }
 }

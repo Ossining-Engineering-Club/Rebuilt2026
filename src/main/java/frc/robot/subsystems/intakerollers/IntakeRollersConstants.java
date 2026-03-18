@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intakerollers;
 
+import edu.wpi.first.math.util.Units;
+
 public class IntakeRollersConstants {
   // CAN ID
   public static final int intakeRollersCANID = 24; // 21;
@@ -13,6 +15,8 @@ public class IntakeRollersConstants {
   public static final double rollersMotorReduction = 0.0;
   public static final double encoderPositionFactor = 1.0; // Rotations -> Rotations
   public static final double encoderVelocityFactor = 1.0 / 60; // RPM -> Rot/Sec
+
+  public static final double maxPivotAngleForMoving = Units.degreesToRadians(45);
 
   // current limits for Spark Max
   public static final int rollersMotorFreeCurrentLimit = 38;

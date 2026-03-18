@@ -26,7 +26,7 @@ public class IntakePivotConstants {
   public static final double minAngle = Units.degreesToRadians(9.5);
   public static final double startAngle = Units.degreesToRadians(108.0);
   public static final double extendedAngle = Units.degreesToRadians(9.5);
-  public static final double uprightAngle = Units.degreesToRadians(75.0);
+  // public static final double uprightAngle = Units.degreesToRadians(75.0);
   public static final double retractedAngle = Units.degreesToRadians(108.0);
   public static final double agitationTopAngle = Units.degreesToRadians(40.0);
   public static final double agitationBottomAngle = Units.degreesToRadians(9.5);

@@ -117,7 +117,7 @@ public class IntakePivot extends SubsystemBase {
     return goToAngle(retractedAngle);
   }
 
-  public Command upright() {
-    return goToAngle(uprightAngle);
-  }
+  // public Command upright() {
+  //   return goToAngle(uprightAngle);
+  // }
 }

@@ -122,7 +122,8 @@ public class RobotContainer {
         turret = new Turret(new TurretIOReal());
         shooterHood = new ShooterHood(new ShooterHoodIOReal());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOReal());
-        intakeRollers = new IntakeRollers(new IntakeRollersIOTalonFX());
+        intakeRollers =
+            new IntakeRollers(new IntakeRollersIOTalonFX(), () -> intakePivot.getAngle());
         spindexer = new Spindexer(new SpindexerIOReal());
         feeder = new Feeder(new FeederIOTalonFX());
         break;
@@ -157,7 +158,7 @@ public class RobotContainer {
         turret = new Turret(new TurretIOSim());
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIOSim());
-        intakeRollers = new IntakeRollers(new IntakeRollersIOSim());
+        intakeRollers = new IntakeRollers(new IntakeRollersIOSim(), () -> intakePivot.getAngle());
         spindexer = new Spindexer(new SpindexerIOSim());
         feeder = new Feeder(new FeederIOSim());
 
@@ -191,7 +192,7 @@ public class RobotContainer {
         turret = new Turret(new TurretIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterFlywheels = new ShooterFlywheels(new ShooterFlywheelsIO() {});
-        intakeRollers = new IntakeRollers(new IntakeRollersIO() {});
+        intakeRollers = new IntakeRollers(new IntakeRollersIO() {}, () -> intakePivot.getAngle());
         spindexer = new Spindexer(new SpindexerIO() {});
         feeder = new Feeder(new FeederIO() {});
         break;
@@ -226,7 +227,7 @@ public class RobotContainer {
   private void configureNamedCommands() {
     NamedCommands.registerCommand("Retract Intake", intakePivot.retract());
     NamedCommands.registerCommand("Extend Intake", intakePivot.extend());
-    NamedCommands.registerCommand("Upright Intake", intakePivot.upright());
+    // NamedCommands.registerCommand("Upright Intake", intakePivot.upright());
     NamedCommands.registerCommand(
         "Start Intake", Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
     NamedCommands.registerCommand(
@@ -371,7 +372,8 @@ public class RobotContainer {
     operatorController.y().onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
 
     operatorController.povUp().onTrue(intakePivot.extend());
-    operatorController.povLeft().onTrue(intakePivot.upright());
+    // operatorController.povLeft().onTrue(intakePivot.upright());
+    operatorController.povLeft().whileTrue(new IntakeAgitate(intakePivot));
     operatorController.povDown().onTrue(intakePivot.retract());
 
     operatorController

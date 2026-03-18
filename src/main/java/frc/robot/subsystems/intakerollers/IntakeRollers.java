@@ -5,6 +5,7 @@ import static frc.robot.subsystems.intakerollers.IntakeRollersConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeRollers extends SubsystemBase {
@@ -16,12 +17,14 @@ public class IntakeRollers extends SubsystemBase {
 
   private final IntakeRollersIO io;
   private final IntakeRollersIOInputsAutoLogged inputs = new IntakeRollersIOInputsAutoLogged();
+  private final DoubleSupplier intakePivotAngleSupplier;
 
   private IntakeRollersState state;
 
   /** Intake Rollers construction */
-  public IntakeRollers(IntakeRollersIO io) {
+  public IntakeRollers(IntakeRollersIO io, DoubleSupplier intakePivotAngleSupplier) {
     this.io = io;
+    this.intakePivotAngleSupplier = intakePivotAngleSupplier;
     state = IntakeRollersState.STOPPED;
   }
 
@@ -29,18 +32,26 @@ public class IntakeRollers extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake Rollers", inputs);
+
+    if (intakePivotAngleSupplier.getAsDouble() > maxPivotAngleForMoving) {
+      stopMotor();
+    }
   }
 
   /** Sets motor voltage to predefined voltage forward */
   public void startMotor() {
-    state = IntakeRollersState.INTAKING;
-    io.setRollersMotorVoltage(IntakeRollersConstants.forwardVoltage);
+    if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
+      state = IntakeRollersState.INTAKING;
+      io.setRollersMotorVoltage(IntakeRollersConstants.forwardVoltage);
+    }
   }
 
   /** Reverses Intake Rollers motor */
   public void reverseMotor() {
-    state = IntakeRollersState.EJECTING;
-    io.setRollersMotorVoltage(IntakeRollersConstants.reverseVoltage);
+    if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
+      state = IntakeRollersState.EJECTING;
+      io.setRollersMotorVoltage(IntakeRollersConstants.reverseVoltage);
+    }
   }
 
   /** Stops motor */
