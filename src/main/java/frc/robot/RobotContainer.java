@@ -276,9 +276,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -Math.sqrt(0.8) * driverController.getLeftY(),
-            () -> -Math.sqrt(0.8) * driverController.getLeftX(),
-            () -> -Math.sqrt(0.8) * driverController.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Switch to X pattern when X button is pressed
     // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -336,9 +336,9 @@ public class RobotContainer {
                 turret,
                 shooterFlywheels,
                 shooterHood,
-                () -> -Math.sqrt(0.8) * driverController.getLeftY(),
-                () -> -Math.sqrt(0.8) * driverController.getLeftX(),
-                () -> -Math.sqrt(0.8) * driverController.getRightX()));
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> -driverController.getRightX()));
 
     operatorController
         .leftBumper()
