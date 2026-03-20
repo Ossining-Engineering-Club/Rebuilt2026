@@ -155,7 +155,7 @@ public class Vision extends SubsystemBase {
       estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
-    if (VisionConstants.IGNORE_YAW) estStdDevs.set(2, 0, Double.MAX_VALUE);
+    if (VisionConstants.IGNORE_YAW || numTags == 1) estStdDevs.set(2, 0, Double.MAX_VALUE);
 
     return estStdDevs;
   }
