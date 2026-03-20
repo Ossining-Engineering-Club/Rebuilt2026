@@ -294,6 +294,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    driverController
+        .rightBumper()
+        .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
+    driverController
+        .leftBumper()
+        .onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
+
     // if (Constants.currentMode == Mode.SIM) {
     //   driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
     // }
@@ -365,11 +372,6 @@ public class RobotContainer {
 
     // operatorController.x().onTrue(Commands.runOnce(() -> turret.setVoltage(0.145), turret));
     // operatorController.x().onFalse(Commands.runOnce(() -> turret.setVoltage(0.0), turret));
-
-    operatorController
-        .x()
-        .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
-    operatorController.y().onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
 
     operatorController.povUp().onTrue(intakePivot.extend());
     // operatorController.povLeft().onTrue(intakePivot.upright());
