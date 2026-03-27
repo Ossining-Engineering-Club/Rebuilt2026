@@ -16,7 +16,7 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
   private final SparkMax rollersMotor;
 
   public IntakeRollersIOSparkMax() {
-    rollersMotor = new SparkMax(intakeRollersCANID, MotorType.kBrushless);
+    rollersMotor = new SparkMax(intakeRollersLeftCANID, MotorType.kBrushless);
 
     var intakeRollersMotorConfig = new SparkMaxConfig();
     intakeRollersMotorConfig.inverted(isInverted).idleMode(IdleMode.kBrake);
@@ -34,8 +34,8 @@ public class IntakeRollersIOSparkMax implements IntakeRollersIO {
 
   @Override
   public void updateInputs(IntakeRollersIOInputs inputs) {
-    inputs.appliedVolts = rollersMotor.getAppliedOutput() * rollersMotor.getBusVoltage();
-    inputs.statorCurrent = rollersMotor.getOutputCurrent();
+    inputs.leftAppliedVolts = rollersMotor.getAppliedOutput() * rollersMotor.getBusVoltage();
+    inputs.leftStatorCurrent = rollersMotor.getOutputCurrent();
   }
 
   @Override

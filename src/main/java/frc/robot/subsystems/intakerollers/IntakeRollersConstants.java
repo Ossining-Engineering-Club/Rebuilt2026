@@ -4,7 +4,8 @@ import edu.wpi.first.math.util.Units;
 
 public class IntakeRollersConstants {
   // CAN ID
-  public static final int intakeRollersCANID = 24; // 21;
+  public static final int intakeRollersLeftCANID = 24; // 21;
+  public static final int intakeRollersRightCANID = 24; // 21;
 
   // Motor Power Level
   public static final double forwardVoltage = 0.8 * 12.0;
