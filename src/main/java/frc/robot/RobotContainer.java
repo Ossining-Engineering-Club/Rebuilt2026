@@ -362,9 +362,7 @@ public class RobotContainer {
     operatorController
         .x()
         .onTrue(Commands.runOnce(() -> intakeRollers.startMotor(), intakeRollers));
-    operatorController
-        .y()
-        .onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
+    operatorController.y().onTrue(Commands.runOnce(() -> intakeRollers.stopMotor(), intakeRollers));
 
     // operatorController.y().onTrue(turret.goToAngle(Units.degreesToRadians(-25)));
     // operatorController.x().onTrue(turret.goToAngle(Units.degreesToRadians(0)));
