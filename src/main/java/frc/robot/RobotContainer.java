@@ -297,6 +297,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    // driverController.x().onTrue(turret.goToAngle(TurretConstants.minAngle));
+    // driverController.y().onTrue(turret.goToAngle(TurretConstants.storedAngle));
+    // driverController.b().onTrue(turret.goToAngle(TurretConstants.maxAngle));
+
+    // driverController.x().onTrue(Commands.runOnce(() -> turret.setVoltage(0.1)));
+    // driverController.x().onFalse(Commands.runOnce(() -> turret.stop()));
+
     // if (Constants.currentMode == Mode.SIM) {
     //   driverController.start().onTrue(Commands.runOnce(() -> fuelSim.clearFuel()));
     // }

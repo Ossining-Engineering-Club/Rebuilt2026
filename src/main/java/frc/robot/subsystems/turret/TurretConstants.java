@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 public class TurretConstants {
   // motor constants
   public static final int canId = 30;
-  public static final double motorReduction = 143.75 / 1.0; // 51.75 / 1.0; // 143.75 / 1.0;
+  public static final double motorReduction = 51.75 / 1.0; // 143.75 / 1.0;
   public static final double encoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
   public static final double encoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
   public static final boolean isInverted = false;
@@ -14,11 +14,11 @@ public class TurretConstants {
   public static final int freeCurrentLimit = 38;
 
   // control system
-  public static final double kP = 30;
+  public static final double kP = 0; // 30;
   public static final double kI = 0.0;
-  public static final double kD = 1.0;
-  public static final double kS = 0.145;
-  public static final double kV = 2;
+  public static final double kD = 0; // 1.0;
+  public static final double kS = 0; // 0.145;
+  public static final double kV = 0; // 2;
   public static final double kA = 0.0;
   public static final double maxVelocity = Units.degreesToRadians(180.0);
   public static final double maxAcceleration = Units.degreesToRadians(720.0);
