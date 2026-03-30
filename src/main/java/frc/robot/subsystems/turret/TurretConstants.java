@@ -14,13 +14,13 @@ public class TurretConstants {
   public static final int freeCurrentLimit = 38;
 
   // control system
-  public static final double kP = 0; // 30;
+  public static final double kP = 7;
   public static final double kI = 0.0;
-  public static final double kD = 0; // 1.0;
-  public static final double kS = 0; // 0.145;
-  public static final double kV = 0; // 2;
+  public static final double kD = 0.0;
+  public static final double kS = 0.17;
+  public static final double kV = 0.8;
   public static final double kA = 0.0;
-  public static final double maxVelocity = Units.degreesToRadians(180.0);
+  public static final double maxVelocity = Units.degreesToRadians(540.0);
   public static final double maxAcceleration = Units.degreesToRadians(720.0);
   public static final double simP = 50;
   public static final double simI = 0;
@@ -33,8 +33,8 @@ public class TurretConstants {
   public static final double pidTolerance = Units.degreesToRadians(0.5);
 
   // angle limits
-  public static final double maxAngle = Units.degreesToRadians(113.0);
-  public static final double minAngle = Units.degreesToRadians(-25.0);
+  public static final double maxAngle = Units.degreesToRadians(228.9);
+  public static final double minAngle = Units.degreesToRadians(-49.6);
   public static final double startAngle = Units.degreesToRadians(0.0);
   public static final double storedAngle = 0;
 

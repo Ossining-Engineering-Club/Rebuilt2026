@@ -56,6 +56,7 @@ import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
 import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
@@ -299,11 +300,11 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // driverController.x().onTrue(turret.goToAngle(TurretConstants.minAngle));
-    // driverController.y().onTrue(turret.goToAngle(TurretConstants.storedAngle));
-    // driverController.b().onTrue(turret.goToAngle(TurretConstants.maxAngle));
+    driverController.x().onTrue(turret.goToAngle(TurretConstants.minAngle));
+    driverController.y().onTrue(turret.goToAngle(TurretConstants.storedAngle));
+    driverController.b().onTrue(turret.goToAngle(TurretConstants.maxAngle));
 
-    // driverController.x().onTrue(Commands.runOnce(() -> turret.setVoltage(0.1)));
+    // driverController.x().onTrue(Commands.runOnce(() -> turret.setVoltage(0.17)));
     // driverController.x().onFalse(Commands.runOnce(() -> turret.stop()));
 
     // if (Constants.currentMode == Mode.SIM) {
@@ -550,7 +551,7 @@ public class RobotContainer {
         Commands.run(
             () ->
                 turret.setVoltage(
-                    0.25 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
+                    0.15 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
             turret));
 
     // Feeder auto unjam
