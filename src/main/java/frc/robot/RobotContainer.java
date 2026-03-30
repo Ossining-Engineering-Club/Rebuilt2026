@@ -265,6 +265,8 @@ public class RobotContainer {
         new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
     NamedCommands.registerCommand(
         "Store Shooter Hood", shooterHood.goToAngle(ShooterHoodConstants.startAngle));
+    NamedCommands.registerCommand("Right Auto Pre Aim", turret.goToAngle(1.264));
+    NamedCommands.registerCommand("Left Auto Pre Aim", turret.goToAngle(1.785));
   }
 
   /**
