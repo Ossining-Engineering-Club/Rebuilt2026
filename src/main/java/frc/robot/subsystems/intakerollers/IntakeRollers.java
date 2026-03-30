@@ -33,25 +33,25 @@ public class IntakeRollers extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake Rollers", inputs);
 
-    if (intakePivotAngleSupplier.getAsDouble() > maxPivotAngleForMoving) {
-      stopMotor();
-    }
+    // if (intakePivotAngleSupplier.getAsDouble() > maxPivotAngleForMoving) {
+    //   stopMotor();
+    // }
   }
 
   /** Sets motor voltage to predefined voltage forward */
   public void startMotor() {
-    if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
-      state = IntakeRollersState.INTAKING;
-      io.setRollersMotorVoltage(IntakeRollersConstants.forwardVoltage);
-    }
+    // if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
+    state = IntakeRollersState.INTAKING;
+    io.setRollersMotorVoltage(IntakeRollersConstants.forwardVoltage);
+    // }
   }
 
   /** Reverses Intake Rollers motor */
   public void reverseMotor() {
-    if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
-      state = IntakeRollersState.EJECTING;
-      io.setRollersMotorVoltage(IntakeRollersConstants.reverseVoltage);
-    }
+    // if (intakePivotAngleSupplier.getAsDouble() <= maxPivotAngleForMoving) {
+    state = IntakeRollersState.EJECTING;
+    io.setRollersMotorVoltage(IntakeRollersConstants.reverseVoltage);
+    // }
   }
 
   /** Stops motor */

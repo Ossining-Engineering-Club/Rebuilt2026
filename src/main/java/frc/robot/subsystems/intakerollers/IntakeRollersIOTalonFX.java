@@ -37,7 +37,8 @@ public class IntakeRollersIOTalonFX implements IntakeRollersIO {
     tryUntilOk(5, () -> rightRollersMotor.getConfigurator().apply(rightConfig, 0.25));
 
     // set right motor to follow left motor
-    rightRollersMotor.setControl(new Follower(leftRollersMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+    rightRollersMotor.setControl(
+        new Follower(leftRollersMotor.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   @Override
