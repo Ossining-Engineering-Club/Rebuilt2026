@@ -110,6 +110,12 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "Store Shooter Hood"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
                   "pathName": "LeftDoubleDip-2"

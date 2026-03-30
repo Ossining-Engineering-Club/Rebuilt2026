@@ -47,6 +47,7 @@ import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIO;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOReal;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOSim;
 import frc.robot.subsystems.shooterhood.ShooterHood;
+import frc.robot.subsystems.shooterhood.ShooterHoodConstants;
 import frc.robot.subsystems.shooterhood.ShooterHoodIO;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
@@ -262,6 +263,8 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Maintain Intaking Angle",
         new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
+    NamedCommands.registerCommand(
+        "Store Shooter Hood", shooterHood.goToAngle(ShooterHoodConstants.startAngle));
   }
 
   /**
@@ -332,6 +335,10 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> -driverController.getRightX()));
+
+    operatorController
+        .leftTrigger(0.9)
+        .onFalse(shooterHood.goToAngle(ShooterHoodConstants.startAngle));
 
     operatorController
         .leftBumper()
