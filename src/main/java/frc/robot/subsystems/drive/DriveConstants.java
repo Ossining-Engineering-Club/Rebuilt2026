@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 
 public final class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.262253; // 5.24;
+  public static final double maxSpeedMetersPerSec = 5.24; // 4.262253; // 5.24;
   public static final double odometryFrequency = 100.0;
   public static final double trackWidth = Units.inchesToMeters(24.75); // meters
   public static final double wheelBase = Units.inchesToMeters(18.75); // meters
@@ -136,7 +136,7 @@ public final class DriveConstants {
   // PathPlanner configuration
   public static final double robotMassKg = Units.lbsToKilograms(130);
   public static final double robotMOI = 5.6329362863;
-  public static final double wheelCOF = 1.2;
+  public static final double wheelCOF = 2.255; // 1.2;
   public static final RobotConfig ppConfig =
       new RobotConfig(
           robotMassKg,

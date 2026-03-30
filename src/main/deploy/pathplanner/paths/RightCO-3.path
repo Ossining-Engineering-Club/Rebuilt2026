@@ -64,7 +64,7 @@
     "rotation": 29.999999999999996
   },
   "reversed": false,
-  "folder": "RightCO",
+  "folder": "old-RightCO",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": -90.0

@@ -1,11 +1,12 @@
 {
-  "robotWidth": 0.9144,
+  "robotWidth": 0.914,
   "robotLength": 0.9652,
   "holonomicMode": true,
   "pathFolders": [
-    "LeftCD",
     "MiddleD",
-    "RightCO"
+    "LeftDoubleDip",
+    "old-LeftCD",
+    "old-RightCO"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
@@ -32,5 +33,7 @@
   "brModuleY": -0.314325,
   "bumperOffsetX": -0.1016,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.381,\"y\":-0.4572},\"end\":{\"x\":-0.381,\"y\":0.4572},\"strokeWidth\":0.02}}"
+  ]
 }

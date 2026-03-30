@@ -45,7 +45,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "LeftCD",
+  "folder": "old-LeftCD",
   "idealStartingState": {
     "velocity": 1.0,
     "rotation": 90.0
