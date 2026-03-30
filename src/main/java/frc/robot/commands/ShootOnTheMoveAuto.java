@@ -84,8 +84,9 @@ public class ShootOnTheMoveAuto extends Command {
     Translation2d modifiedHub = calculateModifiedHub(targetHub, shooterPosition);
 
     double desiredTurretAngle =
-        modifiedHub.minus(shooterPosition).getAngle().getRadians()
-            - drive.getRotation().getRadians();
+        wrapAngle(
+            modifiedHub.minus(shooterPosition).getAngle().getRadians()
+                - drive.getRotation().getRadians());
 
     double distance = modifiedHub.minus(shooterPosition).getNorm();
 
@@ -175,5 +176,9 @@ public class ShootOnTheMoveAuto extends Command {
     Logger.recordOutput("ShooterAlignOnTheMove/EstimatedTOF", TOF);
     Logger.recordOutput("ShooterAlignOnTheMove/TOFRecursions", numRecursions);
     return modifiedHub;
+  }
+
+  private double wrapAngle(double angleRadians) {
+    return (angleRadians + 101 * Math.PI) % (2 * Math.PI) - Math.PI;
   }
 }
