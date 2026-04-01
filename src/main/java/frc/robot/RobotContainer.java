@@ -206,10 +206,10 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     // autoChooser.addOption(
     //     "Drive SysId (Quasistatic Forward)",
     //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -383,7 +383,7 @@ public class RobotContainer {
     operatorController.povUp().onTrue(intakePivot.extend());
     // operatorController.povLeft().onTrue(intakePivot.upright());
     operatorController.povLeft().whileTrue(new IntakeAgitate(intakePivot));
-    operatorController.povDown().onTrue(intakePivot.retract());
+    // operatorController.povDown().onTrue(intakePivot.retract());
 
     operatorController
         .b()
