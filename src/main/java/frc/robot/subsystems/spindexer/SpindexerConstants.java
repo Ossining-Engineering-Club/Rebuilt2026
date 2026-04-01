@@ -3,7 +3,7 @@ package frc.robot.subsystems.spindexer;
 public class SpindexerConstants {
   public static final int spindexerCanID = 23;
 
-  public static final double forwardVoltage = 12.0 * 0.7;
+  public static final double forwardVoltage = 12.0 * 0.85;
   public static final double reverseVoltage = -6.0;
 
   public static final boolean isInverted = false;
