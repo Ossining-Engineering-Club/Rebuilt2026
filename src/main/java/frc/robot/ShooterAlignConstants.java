@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 public class ShooterAlignConstants {
   public static class Real {
     public static final double minDist = 1.5;
-    public static final double latencyCompensationSeconds = 0.1;
+    public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
         0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
@@ -55,7 +55,7 @@ public class ShooterAlignConstants {
 
   public static class RealAuto {
     public static final double minDist = 1.5;
-    public static final double latencyCompensationSeconds = 0.1;
+    public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
         0.0; // distance is multiplied by (1 + distanceIncreaseScalar *

@@ -28,7 +28,7 @@ public class IntakePivotConstants {
   public static final double extendedAngle = Units.degreesToRadians(-2.0);
   // public static final double uprightAngle = Units.degreesToRadians(75.0);
   public static final double retractedAngle = Units.degreesToRadians(108.0);
-  public static final double agitationTopAngle = Units.degreesToRadians(50.0);
+  public static final double agitationTopAngle = Units.degreesToRadians(75.0);
   public static final double agitationBottomAngle = Units.degreesToRadians(-2.0);
 
   public static final double agitationPeriodSeconds = 2;
