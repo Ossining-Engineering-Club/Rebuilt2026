@@ -32,6 +32,7 @@ public class ShooterAlignConstants {
       shooterRPMMap.put(4.5, 2296.6); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0); // 2666.0);
+      shooterRPMMap.put(17.0, 3671.3);
     }
 
     static {
@@ -41,6 +42,7 @@ public class ShooterAlignConstants {
       shooterHoodMap.put(4.5, Units.degreesToRadians(57.88));
       shooterHoodMap.put(5.5, Units.degreesToRadians(52.06));
       shooterHoodMap.put(6.5, Units.degreesToRadians(50.56));
+      shooterHoodMap.put(17.0, Units.degreesToRadians(50.56));
     }
 
     static {
@@ -50,6 +52,7 @@ public class ShooterAlignConstants {
       TOFMap.put(4.5, 1.32);
       TOFMap.put(5.5, 1.3);
       TOFMap.put(6.5, 1.41);
+      TOFMap.put(17.0, 2.158);
     }
   }
 
@@ -75,6 +78,7 @@ public class ShooterAlignConstants {
       shooterRPMMap.put(4.5, 2296.6); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0); // 2666.0);
+      shooterRPMMap.put(17.0, 3671.3);
     }
 
     static {
@@ -84,6 +88,7 @@ public class ShooterAlignConstants {
       shooterHoodMap.put(4.5, Units.degreesToRadians(57.88));
       shooterHoodMap.put(5.5, Units.degreesToRadians(52.06));
       shooterHoodMap.put(6.5, Units.degreesToRadians(50.56));
+      shooterHoodMap.put(17.0, Units.degreesToRadians(50.56));
     }
 
     static {
@@ -93,6 +98,7 @@ public class ShooterAlignConstants {
       TOFMap.put(4.5, 1.32);
       TOFMap.put(5.5, 1.3);
       TOFMap.put(6.5, 1.41);
+      TOFMap.put(17.0, 2.158);
     }
   }
 
