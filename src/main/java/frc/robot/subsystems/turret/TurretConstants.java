@@ -34,7 +34,7 @@ public class TurretConstants {
 
   // angle limits
   public static final double maxAngle = Units.degreesToRadians(179.9); // 228.9);
-  public static final double minAngle = Units.degreesToRadians(-49.6);
+  public static final double minAngle = Units.degreesToRadians(-46);
   public static final double startAngle = Units.degreesToRadians(0.0);
   public static final double storedAngle = 0;
 
