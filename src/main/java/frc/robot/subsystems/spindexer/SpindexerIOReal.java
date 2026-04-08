@@ -19,7 +19,7 @@ public class SpindexerIOReal implements SpindexerIO {
     var config = new TalonFXConfiguration();
     config.MotorOutput.Inverted =
         isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.Feedback.SensorToMechanismRatio = spindexerMotorReduction;
     config.CurrentLimits.SupplyCurrentLimit = spindexerMotorSupplyCurrentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
