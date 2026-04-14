@@ -33,6 +33,15 @@ public final class DriveConstants {
       };
 
   public static final Current slipCurrent = Amps.of(120.0);
+  public static final Current driveSupplyCurrentLimit = Amps.of(40.0);
+
+  // Drive speed multipliers
+  public static final double driveTranslationalSpeedMultiplierWhileIntaking = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileIntaking = 1.0;
+  public static final double driveTranslationalSpeedMultiplierWhileShooting = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileShooting = 1.0;
+  public static final double driveTranslationalSpeedMultiplierWhileIntakingAndShooting = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileIntakingAndShooting = 1.0;
 
   // Drive motor configuration
   public static final double driveMotorReduction = 5.27 / 1.0;
