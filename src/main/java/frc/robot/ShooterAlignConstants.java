@@ -4,6 +4,8 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterAlignConstants {
+  public static final double realRPMMultiplier = 0.95;
+
   public static class Real {
     public static final double minDist = 1.5;
     public static final double latencyCompensationSeconds = 0.0;
@@ -26,13 +28,13 @@ public class ShooterAlignConstants {
     public static final InterpolatingDoubleTreeMap TOFMap = new InterpolatingDoubleTreeMap();
 
     static {
-      shooterRPMMap.put(1.5, 1566.6);
-      shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
-      shooterRPMMap.put(5.5, 2357.0); // 2457.0);
-      shooterRPMMap.put(6.5, 2566.0); // 2666.0);
-      shooterRPMMap.put(17.0, 3671.3);
+      shooterRPMMap.put(1.5, 1566.6 * realRPMMultiplier);
+      shooterRPMMap.put(2.5, 1957.1 * realRPMMultiplier);
+      shooterRPMMap.put(3.5, 2078.7 * realRPMMultiplier); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
+      shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
+      shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
+      shooterRPMMap.put(17.0, 3671.3 * realRPMMultiplier);
     }
 
     static {
@@ -72,13 +74,13 @@ public class ShooterAlignConstants {
     public static final InterpolatingDoubleTreeMap TOFMap = new InterpolatingDoubleTreeMap();
 
     static {
-      shooterRPMMap.put(1.5, 1566.6);
-      shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
-      shooterRPMMap.put(5.5, 2357.0); // 2457.0);
-      shooterRPMMap.put(6.5, 2566.0); // 2666.0);
-      shooterRPMMap.put(17.0, 3671.3);
+      shooterRPMMap.put(1.5, 1566.6 * realRPMMultiplier);
+      shooterRPMMap.put(2.5, 1957.1 * realRPMMultiplier);
+      shooterRPMMap.put(3.5, 2078.7 * realRPMMultiplier); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
+      shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
+      shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
+      shooterRPMMap.put(17.0, 3671.3 * realRPMMultiplier);
     }
 
     static {
