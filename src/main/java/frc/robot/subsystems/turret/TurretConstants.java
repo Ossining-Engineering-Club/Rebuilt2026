@@ -20,6 +20,7 @@ public class TurretConstants {
   public static final double kS = 0.17;
   public static final double kV = 0.8;
   public static final double kA = 0.0;
+  public static final double constantForceSpringCompensation = 0.1;
   public static final double maxVelocity = Units.degreesToRadians(540.0);
   public static final double maxAcceleration = Units.degreesToRadians(720.0);
   public static final double simP = 50;
@@ -37,6 +38,7 @@ public class TurretConstants {
   public static final double minAngle = Units.degreesToRadians(-46);
   public static final double startAngle = Units.degreesToRadians(0.0);
   public static final double storedAngle = 0;
+  public static final double springTurnAroundAngle = 0;
 
   // absolute encoders
   public static final int AE18tChannel = 3;

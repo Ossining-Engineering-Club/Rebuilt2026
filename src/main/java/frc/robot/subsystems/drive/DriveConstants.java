@@ -44,15 +44,15 @@ public final class DriveConstants {
   public static final double driveRotationalSpeedMultiplierWhileIntakingAndShooting = 1.0;
 
   // Drive motor configuration
-  public static final double driveMotorReduction = 5.27 / 1.0;
+  public static final double driveMotorReduction = 6.03 / 1.0;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60(1);
 
   // Drive PID configuration
   public static final double driveP = 0;
   public static final double driveI = 0;
   public static final double driveD = 0;
-  public static final double driveS = 0.19117;
-  public static final double driveV = 0.62165;
+  public static final double driveS = 0.16607; // 0.19117;
+  public static final double driveV = 0.70648; // 0.62165;
   public static final double driveA = 0;
   public static final double driveSimP = 0.1;
   public static final double driveSimI = 0.0;

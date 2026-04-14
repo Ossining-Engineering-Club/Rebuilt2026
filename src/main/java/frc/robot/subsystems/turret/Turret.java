@@ -112,10 +112,18 @@ public class Turret extends SubsystemBase {
     double pidOutput = secondaryPID.calculate(getAngle(), mainPID.getSetpoint().position);
     mainPID.calculate(getAngle(), angleGoal);
 
+    double springCompensation;
+    if (getAngle() > springTurnAroundAngle) {
+      springCompensation = constantForceSpringCompensation;
+    } else {
+      springCompensation = -constantForceSpringCompensation;
+    }
+
     setVoltage(
         pidOutput
             + feedforward.calculateWithVelocities(
-                prevSetpointVelocity, mainPID.getSetpoint().velocity));
+                prevSetpointVelocity, mainPID.getSetpoint().velocity)
+            + springCompensation);
 
     ticksSinceLastPID = 0;
     prevSetpointVelocity = mainPID.getSetpoint().velocity;
