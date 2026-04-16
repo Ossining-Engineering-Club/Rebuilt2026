@@ -180,8 +180,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        vision =
-            new Vision(new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(new VisionIO() {}, new VisionIO() {});
         drive =
             new Drive(
                 new GyroIO() {},
