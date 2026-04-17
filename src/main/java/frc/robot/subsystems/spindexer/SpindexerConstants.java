@@ -9,4 +9,8 @@ public class SpindexerConstants {
   public static final boolean isInverted = false;
   public static final double spindexerMotorReduction = 9.0 / 1.0;
   public static final int spindexerMotorSupplyCurrentLimit = 38;
+
+  // auto jam detection
+  public static final int jamSupplyCurrentThreshold = 32;
+  public static final int jamTicksThreshold = 50;
 }

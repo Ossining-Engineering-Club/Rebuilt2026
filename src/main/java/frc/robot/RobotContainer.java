@@ -9,10 +9,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeAgitate;
 import frc.robot.commands.MaintainIntakePivotAngle;
@@ -54,6 +56,7 @@ import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.Spindexer.SpindexerState;
+import frc.robot.subsystems.spindexer.SpindexerConstants;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
@@ -547,16 +550,16 @@ public class RobotContainer {
                     0.15 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
             turret));
 
-    // Feeder auto unjam
-    // Logger.recordOutput("Time of Last Feeder Jam", -1);
-    // new Trigger(() -> feeder.getStatorCurrent() >= FeederConstants.jamStatorCurrentThreshold)
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () -> Logger.recordOutput("Time of Last Feeder Jam",
-    // Timer.getFPGATimestamp()))
-    //             .andThen(Commands.runOnce(() -> feeder.reverseMotor(), feeder))
-    //             .andThen(Commands.waitSeconds(1.0))
-    //             .andThen(Commands.runOnce(() -> feeder.stopMotor(), feeder)));
+    // Spindexer auto unjam
+    Logger.recordOutput("Time of Last Spindexer Jam", -1);
+    new Trigger(() -> spindexer.getNumJamTicks() >= SpindexerConstants.jamTicksThreshold)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        Logger.recordOutput("Time of Last Spindexer Jam", Timer.getFPGATimestamp()))
+                .andThen(Commands.runOnce(() -> spindexer.reverseMotor(), spindexer))
+                .andThen(Commands.waitSeconds(0.4))
+                .andThen(Commands.runOnce(() -> spindexer.startMotor(), spindexer)));
   }
 
   private void configureFuelSim() {
