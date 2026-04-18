@@ -34,7 +34,7 @@ public class ShooterAlignConstants {
       shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
-      shooterRPMMap.put(17.0, 3671.3 * realRPMMultiplier);
+      shooterRPMMap.put(17.0, 4000.0 * realRPMMultiplier);
     }
 
     static {
@@ -80,7 +80,7 @@ public class ShooterAlignConstants {
       shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
       shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
       shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
-      shooterRPMMap.put(17.0, 3671.3 * realRPMMultiplier);
+      shooterRPMMap.put(17.0, 4000.0 * realRPMMultiplier);
     }
 
     static {
