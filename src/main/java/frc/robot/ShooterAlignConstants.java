@@ -4,7 +4,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterAlignConstants {
-  public static final double realRPMMultiplier = 0.95;
+  public static final double realRPMMultiplier = 0.99;
 
   public static class Real {
     public static final double minDist = 1.5;

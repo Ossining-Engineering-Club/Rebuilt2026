@@ -93,7 +93,7 @@ public final class DriveConstants {
   public static final Voltage steerFrictionVoltage = Volts.of(1.2);
   public static final Voltage driveFrictionVoltage = Volts.of(0.2);
 
-  public static final int pigeonId = 13;
+  public static final int pigeonId = 14;
 
   public static final boolean invertLeftSide = false;
   public static final boolean invertRightSide = false;
