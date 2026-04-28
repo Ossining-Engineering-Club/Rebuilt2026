@@ -67,6 +67,12 @@
                       "data": {
                         "waitTime": 3.0
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Left Follower Auto Pre Aim"
+                      }
                     }
                   ]
                 }

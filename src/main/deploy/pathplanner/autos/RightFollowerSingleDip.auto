@@ -27,7 +27,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "LeftFollower-1"
+                        "pathName": "RightFollower-1"
                       }
                     }
                   ]
@@ -71,7 +71,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Left Follower Auto Pre Aim"
+                        "name": "Right Follower Auto Pre Aim"
                       }
                     }
                   ]
@@ -87,7 +87,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 20.0
                 }
               },
               {
@@ -120,80 +120,11 @@
                     }
                   ]
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Shooting"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LeftFollower-3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Extend Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "LeftFollower-4"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 10.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Aim On The Move"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.25
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Start Shooting"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Agitate"
-                      }
-                    }
-                  ]
+                  "pathName": "RightFollower-3"
                 }
               }
             ]

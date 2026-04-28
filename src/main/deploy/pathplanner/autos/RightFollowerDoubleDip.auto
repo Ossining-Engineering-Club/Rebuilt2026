@@ -27,7 +27,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "LeftFollower-1"
+                        "pathName": "RightFollower-1"
                       }
                     }
                   ]
@@ -71,7 +71,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Left Follower Auto Pre Aim"
+                        "name": "Right Follower Auto Pre Aim"
                       }
                     }
                   ]
@@ -137,7 +137,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LeftFollower-3"
+                  "pathName": "RightFollower-2"
                 }
               },
               {
@@ -145,14 +145,14 @@
                 "data": {
                   "name": "Extend Intake"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Store Shooter Hood"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "LeftFollower-4"
           }
         },
         {
@@ -162,7 +162,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 10.0
+                  "waitTime": 20.0
                 }
               },
               {
@@ -194,6 +194,12 @@
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightFollower-3"
                 }
               }
             ]

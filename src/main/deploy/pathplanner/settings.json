@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "LeftDoubleDip",
-    "MiddleD",
     "LeftFollower",
+    "MiddleD",
+    "RightFollower",
     "RightDoubleDip",
     "old-LeftCD",
     "old-RightCO"

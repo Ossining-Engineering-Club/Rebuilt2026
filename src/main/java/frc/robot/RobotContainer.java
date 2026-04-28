@@ -268,6 +268,8 @@ public class RobotContainer {
         "Store Shooter Hood", shooterHood.goToAngle(ShooterHoodConstants.startAngle));
     NamedCommands.registerCommand("Right Auto Pre Aim", turret.goToAngle(1.264));
     NamedCommands.registerCommand("Left Auto Pre Aim", turret.goToAngle(1.785));
+    NamedCommands.registerCommand("Right Follower Auto Pre Aim", turret.goToAngle(-0.144));
+    NamedCommands.registerCommand("Left Follower Auto Pre Aim", turret.goToAngle(-0.011));
   }
 
   /**
