@@ -40,6 +40,12 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "Store Shooter Hood"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
