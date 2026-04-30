@@ -35,12 +35,6 @@
                       "data": {
                         "name": "Start Shooting"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Agitate"
-                      }
                     }
                   ]
                 }
