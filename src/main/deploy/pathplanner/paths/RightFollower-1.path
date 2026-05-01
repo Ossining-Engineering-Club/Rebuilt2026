@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.254444444444444,
-        "y": 0.64
+        "y": 0.6400000000000001
       },
       "nextControl": {
         "x": 7.254444444444444,
@@ -78,8 +78,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8045007032348798,
-      "rotationDegrees": 180.0
+      "waypointRelativePos": 0.8602150537634394,
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 1.8790436005625872,
@@ -109,7 +109,7 @@
   "folder": "RightFollower",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }
