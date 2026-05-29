@@ -23,13 +23,13 @@ public class IntakePivotConstants {
 
   // Angle Setpoints
   public static final double maxAngle = Units.degreesToRadians(108.0);
-  public static final double minAngle = Units.degreesToRadians(9.5);
+  public static final double minAngle = Units.degreesToRadians(-2.0);
   public static final double startAngle = Units.degreesToRadians(108.0);
-  public static final double extendedAngle = Units.degreesToRadians(9.5);
+  public static final double extendedAngle = Units.degreesToRadians(-2.0);
   // public static final double uprightAngle = Units.degreesToRadians(75.0);
   public static final double retractedAngle = Units.degreesToRadians(108.0);
-  public static final double agitationTopAngle = Units.degreesToRadians(40.0);
-  public static final double agitationBottomAngle = Units.degreesToRadians(9.5);
+  public static final double agitationTopAngle = Units.degreesToRadians(75.0);
+  public static final double agitationBottomAngle = Units.degreesToRadians(-2.0);
 
   public static final double agitationPeriodSeconds = 2;
 
@@ -37,7 +37,7 @@ public class IntakePivotConstants {
   public static final int stallCurrentLimit = 38;
   public static final int freeCurrentLimit = 38;
   public static final int supplyCurrentLimit = 38;
-  public static final double motorReduction = 94.5 / 1.0;
+  public static final double motorReduction = 210.0 / 1.0; // 94.5 / 1.0;
   public static final boolean isInverted = false;
   public static final double encoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
   public static final double encoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -24,5 +25,5 @@ public final class Constants {
   }
 
   public static final Translation3d shooterOffset =
-      new Translation3d(0.130175, 0.2032, 0.5103150068);
+      new Translation3d(0.130175, 0.2032 - Units.inchesToMeters(1), 0.5103150068);
 }

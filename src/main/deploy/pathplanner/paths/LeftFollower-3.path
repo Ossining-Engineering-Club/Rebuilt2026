@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.546,
-        "y": 5.506
+        "x": 2.334,
+        "y": 4.72
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8000666666666665,
-        "y": 6.060633333333333
+        "x": 2.3039555555555555,
+        "y": 5.980011111111112
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.62,
-        "y": 5.97
+        "x": 0.601,
+        "y": 5.96
       },
       "prevControl": {
-        "x": 1.5481222222222222,
-        "y": 5.97
+        "x": 2.344455555555556,
+        "y": 5.96
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,18 +30,18 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.6392496392496444,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6705607476635548,
+      "minWaypointRelativePos": 0.7780678851174925,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 1.0,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -64,10 +64,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "old-LeftCD",
+  "folder": "LeftFollower",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": -59.99999999999999
+    "velocity": 0,
+    "rotation": -45.0
   },
   "useDefaultConstraints": false
 }

@@ -44,9 +44,9 @@ public class VisionConstants {
   public static final Transform3d leftLLRobotToCamOffset =
       new Transform3d(
           new Translation3d(
-              Units.inchesToMeters(5.047364),
-              Units.inchesToMeters(13.289059),
-              Units.inchesToMeters(11.062867)),
-          new Rotation3d(0, Units.degreesToRadians(-28.1), Units.degreesToRadians(84)));
+              Units.inchesToMeters(4.457),
+              Units.inchesToMeters(14.501),
+              Units.inchesToMeters(10.071)),
+          new Rotation3d(0, Units.degreesToRadians(-17.0), Units.degreesToRadians(90)));
   public static final double cameraDiagonalFOVDegrees = Math.hypot(82, 56.2);
 }

@@ -9,12 +9,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeAgitate;
 import frc.robot.commands.MaintainIntakePivotAngle;
@@ -22,6 +20,7 @@ import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.ShootOnTheMoveAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeonIMU;
 import frc.robot.subsystems.drive.GyroIOSim;
@@ -29,7 +28,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.feeder.FeederConstants;
+import frc.robot.subsystems.feeder.Feeder.FeederState;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.feeder.FeederIOTalonFX;
@@ -39,18 +38,22 @@ import frc.robot.subsystems.intakepivot.IntakePivotIO;
 import frc.robot.subsystems.intakepivot.IntakePivotIOSim;
 import frc.robot.subsystems.intakepivot.IntakePivotIOTalonFX;
 import frc.robot.subsystems.intakerollers.IntakeRollers;
+import frc.robot.subsystems.intakerollers.IntakeRollers.IntakeRollersState;
 import frc.robot.subsystems.intakerollers.IntakeRollersIO;
 import frc.robot.subsystems.intakerollers.IntakeRollersIOSim;
 import frc.robot.subsystems.intakerollers.IntakeRollersIOTalonFX;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheels;
+import frc.robot.subsystems.shooterflywheels.ShooterFlywheels.ShooterFlywheelsState;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIO;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOReal;
 import frc.robot.subsystems.shooterflywheels.ShooterFlywheelsIOSim;
 import frc.robot.subsystems.shooterhood.ShooterHood;
+import frc.robot.subsystems.shooterhood.ShooterHoodConstants;
 import frc.robot.subsystems.shooterhood.ShooterHoodIO;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOReal;
 import frc.robot.subsystems.shooterhood.ShooterHoodIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.Spindexer.SpindexerState;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
@@ -177,8 +180,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        vision =
-            new Vision(new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
+        vision = new Vision(new VisionIO() {}, new VisionIO() {});
         drive =
             new Drive(
                 new GyroIO() {},
@@ -205,10 +207,10 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     // autoChooser.addOption(
     //     "Drive SysId (Quasistatic Forward)",
     //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -262,6 +264,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Maintain Intaking Angle",
         new MaintainIntakePivotAngle(intakePivot, IntakePivotConstants.extendedAngle));
+    NamedCommands.registerCommand(
+        "Store Shooter Hood", shooterHood.goToAngle(ShooterHoodConstants.startAngle));
+    NamedCommands.registerCommand("Right Auto Pre Aim", turret.goToAngle(1.264));
+    NamedCommands.registerCommand("Left Auto Pre Aim", turret.goToAngle(1.785));
+    NamedCommands.registerCommand("Right Follower Auto Pre Aim", turret.goToAngle(-0.144));
+    NamedCommands.registerCommand("Left Follower Auto Pre Aim", turret.goToAngle(-0.011));
   }
 
   /**
@@ -276,9 +284,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -getDriveControllerLeftY(),
+            () -> -getDriveControllerLeftX(),
+            () -> -getDriveControllerRightX()));
 
     // Switch to X pattern when X button is pressed
     // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -329,9 +337,13 @@ public class RobotContainer {
                 turret,
                 shooterFlywheels,
                 shooterHood,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> -driverController.getRightX()));
+                () -> -getDriveControllerLeftY(),
+                () -> -getDriveControllerLeftX(),
+                () -> -getDriveControllerRightX()));
+
+    operatorController
+        .leftTrigger(0.9)
+        .onFalse(shooterHood.goToAngle(ShooterHoodConstants.startAngle));
 
     operatorController
         .leftBumper()
@@ -374,7 +386,7 @@ public class RobotContainer {
     operatorController.povUp().onTrue(intakePivot.extend());
     // operatorController.povLeft().onTrue(intakePivot.upright());
     operatorController.povLeft().whileTrue(new IntakeAgitate(intakePivot));
-    operatorController.povDown().onTrue(intakePivot.retract());
+    // operatorController.povDown().onTrue(intakePivot.retract());
 
     operatorController
         .b()
@@ -534,18 +546,19 @@ public class RobotContainer {
         Commands.run(
             () ->
                 turret.setVoltage(
-                    0.25 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
+                    0.15 * 12.0 * MathUtil.applyDeadband(-manualController.getRightX(), 0.1)),
             turret));
 
     // Feeder auto unjam
-    Logger.recordOutput("Time of Last Feeder Jam", -1);
-    new Trigger(() -> feeder.getStatorCurrent() >= FeederConstants.jamStatorCurrentThreshold)
-        .onTrue(
-            Commands.runOnce(
-                    () -> Logger.recordOutput("Time of Last Feeder Jam", Timer.getFPGATimestamp()))
-                .andThen(Commands.runOnce(() -> feeder.reverseMotor(), feeder))
-                .andThen(Commands.waitSeconds(1.0))
-                .andThen(Commands.runOnce(() -> feeder.stopMotor(), feeder)));
+    // Logger.recordOutput("Time of Last Feeder Jam", -1);
+    // new Trigger(() -> feeder.getStatorCurrent() >= FeederConstants.jamStatorCurrentThreshold)
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () -> Logger.recordOutput("Time of Last Feeder Jam",
+    // Timer.getFPGATimestamp()))
+    //             .andThen(Commands.runOnce(() -> feeder.reverseMotor(), feeder))
+    //             .andThen(Commands.waitSeconds(1.0))
+    //             .andThen(Commands.runOnce(() -> feeder.stopMotor(), feeder)));
   }
 
   private void configureFuelSim() {
@@ -643,5 +656,73 @@ public class RobotContainer {
               0,
               new Rotation3d()) // Hopper Extension
         });
+  }
+
+  public enum RobotState {
+    NONE,
+    INTAKING,
+    SHOOTING,
+    INTAKING_AND_SHOOTING
+  }
+
+  public RobotState getRobotState() {
+    if (intakeRollers.getState() == IntakeRollersState.INTAKING
+        && spindexer.getState() == SpindexerState.FORWARD
+        && feeder.getState() == FeederState.FORWARD
+        && shooterFlywheels.getState() == ShooterFlywheelsState.FORWARD) {
+      return RobotState.INTAKING_AND_SHOOTING;
+    } else if (intakeRollers.getState() == IntakeRollersState.INTAKING) {
+      return RobotState.INTAKING;
+    } else if (spindexer.getState() == SpindexerState.FORWARD
+        && feeder.getState() == FeederState.FORWARD
+        && shooterFlywheels.getState() == ShooterFlywheelsState.FORWARD) {
+      return RobotState.SHOOTING;
+    }
+    return RobotState.NONE;
+  }
+
+  public double getDriveControllerLeftY() {
+    RobotState robotState = getRobotState();
+    if (robotState == RobotState.INTAKING) {
+      return driverController.getLeftY()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileIntaking;
+    } else if (robotState == RobotState.SHOOTING) {
+      return driverController.getLeftY()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileShooting;
+    } else if (robotState == RobotState.INTAKING_AND_SHOOTING) {
+      return driverController.getLeftY()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileIntakingAndShooting;
+    }
+    return driverController.getLeftY();
+  }
+
+  public double getDriveControllerLeftX() {
+    RobotState robotState = getRobotState();
+    if (robotState == RobotState.INTAKING) {
+      return driverController.getLeftX()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileIntaking;
+    } else if (robotState == RobotState.SHOOTING) {
+      return driverController.getLeftX()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileShooting;
+    } else if (robotState == RobotState.INTAKING_AND_SHOOTING) {
+      return driverController.getLeftX()
+          * DriveConstants.driveTranslationalSpeedMultiplierWhileIntakingAndShooting;
+    }
+    return driverController.getLeftX();
+  }
+
+  public double getDriveControllerRightX() {
+    RobotState robotState = getRobotState();
+    if (robotState == RobotState.INTAKING) {
+      return driverController.getRightX()
+          * DriveConstants.driveRotationalSpeedMultiplierWhileIntaking;
+    } else if (robotState == RobotState.SHOOTING) {
+      return driverController.getRightX()
+          * DriveConstants.driveRotationalSpeedMultiplierWhileShooting;
+    } else if (robotState == RobotState.INTAKING_AND_SHOOTING) {
+      return driverController.getRightX()
+          * DriveConstants.driveRotationalSpeedMultiplierWhileIntakingAndShooting;
+    }
+    return driverController.getRightX();
   }
 }

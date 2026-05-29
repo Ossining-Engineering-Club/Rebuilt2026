@@ -35,9 +35,9 @@ public class ShooterHoodConstants {
   public static final double pidTolerance = Units.degreesToRadians(0.25);
 
   // Angle Setpoints
-  public static final double maxAngle = Units.degreesToRadians(66);
+  public static final double maxAngle = Units.degreesToRadians(64.5);
   public static final double minAngle = Units.degreesToRadians(40);
-  public static final double startAngle = Units.degreesToRadians(66);
+  public static final double startAngle = Units.degreesToRadians(64.5);
 
   // Sim settings
   public static final DCMotor gearbox = DCMotor.getNeoVortex(1);

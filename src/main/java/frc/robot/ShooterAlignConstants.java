@@ -4,9 +4,11 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 public class ShooterAlignConstants {
+  public static final double realRPMMultiplier = 0.95;
+
   public static class Real {
     public static final double minDist = 1.5;
-    public static final double latencyCompensationSeconds = 0.1;
+    public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
         0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
@@ -26,12 +28,13 @@ public class ShooterAlignConstants {
     public static final InterpolatingDoubleTreeMap TOFMap = new InterpolatingDoubleTreeMap();
 
     static {
-      shooterRPMMap.put(1.5, 1566.6);
-      shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
-      shooterRPMMap.put(5.5, 2357.0); // 2457.0);
-      shooterRPMMap.put(6.5, 2566.0); // 2666.0);
+      shooterRPMMap.put(1.5, 1566.6 * realRPMMultiplier);
+      shooterRPMMap.put(2.5, 1957.1 * realRPMMultiplier);
+      shooterRPMMap.put(3.5, 2078.7 * realRPMMultiplier); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
+      shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
+      shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
+      shooterRPMMap.put(17.0, 4000.0 * realRPMMultiplier);
     }
 
     static {
@@ -41,6 +44,7 @@ public class ShooterAlignConstants {
       shooterHoodMap.put(4.5, Units.degreesToRadians(57.88));
       shooterHoodMap.put(5.5, Units.degreesToRadians(52.06));
       shooterHoodMap.put(6.5, Units.degreesToRadians(50.56));
+      shooterHoodMap.put(17.0, Units.degreesToRadians(50.56));
     }
 
     static {
@@ -50,12 +54,13 @@ public class ShooterAlignConstants {
       TOFMap.put(4.5, 1.32);
       TOFMap.put(5.5, 1.3);
       TOFMap.put(6.5, 1.41);
+      TOFMap.put(17.0, 2.158);
     }
   }
 
   public static class RealAuto {
     public static final double minDist = 1.5;
-    public static final double latencyCompensationSeconds = 0.1;
+    public static final double latencyCompensationSeconds = 0.0;
     public static final double chassisSpeedsMultiplier = 1.0;
     public static final double distanceIncreaseScalar =
         0.0; // distance is multiplied by (1 + distanceIncreaseScalar *
@@ -69,12 +74,13 @@ public class ShooterAlignConstants {
     public static final InterpolatingDoubleTreeMap TOFMap = new InterpolatingDoubleTreeMap();
 
     static {
-      shooterRPMMap.put(1.5, 1566.6);
-      shooterRPMMap.put(2.5, 1957.1);
-      shooterRPMMap.put(3.5, 2078.7); // 2153.7);
-      shooterRPMMap.put(4.5, 2296.6); // 2396.6);
-      shooterRPMMap.put(5.5, 2357.0); // 2457.0);
-      shooterRPMMap.put(6.5, 2566.0); // 2666.0);
+      shooterRPMMap.put(1.5, 1566.6 * realRPMMultiplier);
+      shooterRPMMap.put(2.5, 1957.1 * realRPMMultiplier);
+      shooterRPMMap.put(3.5, 2078.7 * realRPMMultiplier); // 2153.7);
+      shooterRPMMap.put(4.5, 2296.6 * realRPMMultiplier); // 2396.6);
+      shooterRPMMap.put(5.5, 2357.0 * realRPMMultiplier); // 2457.0);
+      shooterRPMMap.put(6.5, 2566.0 * realRPMMultiplier); // 2666.0);
+      shooterRPMMap.put(17.0, 4000.0 * realRPMMultiplier);
     }
 
     static {
@@ -84,6 +90,7 @@ public class ShooterAlignConstants {
       shooterHoodMap.put(4.5, Units.degreesToRadians(57.88));
       shooterHoodMap.put(5.5, Units.degreesToRadians(52.06));
       shooterHoodMap.put(6.5, Units.degreesToRadians(50.56));
+      shooterHoodMap.put(17.0, Units.degreesToRadians(50.56));
     }
 
     static {
@@ -93,6 +100,7 @@ public class ShooterAlignConstants {
       TOFMap.put(4.5, 1.32);
       TOFMap.put(5.5, 1.3);
       TOFMap.put(6.5, 1.41);
+      TOFMap.put(17.0, 2.158);
     }
   }
 

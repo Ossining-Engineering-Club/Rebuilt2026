@@ -1,11 +1,15 @@
 {
-  "robotWidth": 0.9144,
+  "robotWidth": 0.914,
   "robotLength": 0.9652,
   "holonomicMode": true,
   "pathFolders": [
-    "LeftCD",
+    "LeftDoubleDip",
+    "LeftFollower",
     "MiddleD",
-    "RightCO"
+    "RightFollower",
+    "RightDoubleDip",
+    "old-LeftCD",
+    "old-RightCO"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
@@ -16,7 +20,7 @@
   "robotMass": 58.967,
   "robotMOI": 5.6329362863,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.0508,
+  "driveWheelRadius": 0.0490474,
   "driveGearing": 5.27,
   "maxDriveSpeed": 5.24,
   "driveMotorType": "krakenX60",
@@ -32,5 +36,7 @@
   "brModuleY": -0.314325,
   "bumperOffsetX": -0.1016,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.381,\"y\":-0.4572},\"end\":{\"x\":-0.381,\"y\":0.4572},\"strokeWidth\":0.02}}"
+  ]
 }

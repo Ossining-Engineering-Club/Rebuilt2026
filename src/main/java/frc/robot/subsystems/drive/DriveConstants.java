@@ -18,12 +18,12 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 
 public final class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.262253; // 5.24;
+  public static final double maxSpeedMetersPerSec = 5.24; // 4.262253; // 5.24;
   public static final double odometryFrequency = 100.0;
   public static final double trackWidth = Units.inchesToMeters(24.75); // meters
   public static final double wheelBase = Units.inchesToMeters(18.75); // meters
   public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
-  public static final double wheelRadiusMeters = Units.inchesToMeters(2.0);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.931);
   public static final Translation2d[] moduleTranslations =
       new Translation2d[] {
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -33,17 +33,26 @@ public final class DriveConstants {
       };
 
   public static final Current slipCurrent = Amps.of(120.0);
+  public static final Current driveSupplyCurrentLimit = Amps.of(40.0);
+
+  // Drive speed multipliers
+  public static final double driveTranslationalSpeedMultiplierWhileIntaking = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileIntaking = 1.0;
+  public static final double driveTranslationalSpeedMultiplierWhileShooting = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileShooting = 1.0;
+  public static final double driveTranslationalSpeedMultiplierWhileIntakingAndShooting = 1.0;
+  public static final double driveRotationalSpeedMultiplierWhileIntakingAndShooting = 1.0;
 
   // Drive motor configuration
-  public static final double driveMotorReduction = 5.27 / 1.0;
+  public static final double driveMotorReduction = 6.03 / 1.0;
   public static final DCMotor driveGearbox = DCMotor.getKrakenX60(1);
 
   // Drive PID configuration
   public static final double driveP = 0;
   public static final double driveI = 0;
   public static final double driveD = 0;
-  public static final double driveS = 0.13233;
-  public static final double driveV = 0.81857;
+  public static final double driveS = 0.16607; // 0.19117;
+  public static final double driveV = 0.70648; // 0.62165;
   public static final double driveA = 0;
   public static final double driveSimP = 0.1;
   public static final double driveSimI = 0.0;
@@ -84,7 +93,7 @@ public final class DriveConstants {
   public static final Voltage steerFrictionVoltage = Volts.of(1.2);
   public static final Voltage driveFrictionVoltage = Volts.of(0.2);
 
-  public static final int pigeonId = 13;
+  public static final int pigeonId = 14;
 
   public static final boolean invertLeftSide = false;
   public static final boolean invertRightSide = false;
@@ -136,7 +145,7 @@ public final class DriveConstants {
   // PathPlanner configuration
   public static final double robotMassKg = Units.lbsToKilograms(130);
   public static final double robotMOI = 5.6329362863;
-  public static final double wheelCOF = 1.2;
+  public static final double wheelCOF = 2.255; // 1.2;
   public static final RobotConfig ppConfig =
       new RobotConfig(
           robotMassKg,
