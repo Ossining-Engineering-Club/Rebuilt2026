@@ -270,6 +270,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Left Auto Pre Aim", turret.goToAngle(1.785));
     NamedCommands.registerCommand("Right Follower Auto Pre Aim", turret.goToAngle(-0.144));
     NamedCommands.registerCommand("Left Follower Auto Pre Aim", turret.goToAngle(-0.011));
+    NamedCommands.registerCommand("Right Bump Auto Pre Aim", turret.goToAngle(-0.142));
+    NamedCommands.registerCommand("Left Bump Auto Pre Aim", turret.goToAngle(-0.015));
   }
 
   /**
