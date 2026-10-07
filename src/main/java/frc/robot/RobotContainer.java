@@ -339,9 +339,9 @@ public class RobotContainer {
                 turret,
                 shooterFlywheels,
                 shooterHood,
-                () -> -getDriveControllerLeftY(),
-                () -> -getDriveControllerLeftX(),
-                () -> -getDriveControllerRightX()));
+                () -> -0.86 * getDriveControllerLeftY(),
+                () -> -0.86 * getDriveControllerLeftX(),
+                () -> -0.86 * getDriveControllerRightX()));
 
     operatorController
         .leftTrigger(0.9)
